@@ -120,7 +120,7 @@ export function UsersActionDialog({
       if (!user?.id) return
       try {
         const response = await axios.get(
-          apiUrl(API_CONFIG.ENDPOINTS.CATEGORY.GET) + user.id
+          apiUrl(API_CONFIG.ENDPOINTS.CATEGORY.GET)
         )
         const categoryNames =
           response.data?.categories?.map((cat: { name: string }) => cat.name) ||
