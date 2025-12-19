@@ -142,6 +142,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       <SendReportDialog
         managerId={user._id}
         managerName={user.name}
+        role={user.role}
         open={showSendReportDialog}
         onOpenChange={setShowSendReportDialog}
       />

@@ -23,17 +23,19 @@ export function UsersDialogs() {
 
       {currentRow && (
         <>
-          <UsersActionDialog
-            key={`user-edit-${currentRow.id}`}
-            open={open === 'edit'}
-            onOpenChange={() => {
-              setOpen('edit')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
-            currentRow={currentRow}
-          />
+         
+            <UsersActionDialog
+              key={`user-edit-${currentRow.id}`}
+              open={open === 'edit'}
+              onOpenChange={() => {
+                setOpen('edit')
+                setTimeout(() => {
+                  setCurrentRow(null)
+                }, 500)
+              }}
+              currentRow={currentRow}
+            />
+       
 
           <UsersViewDialog
             key={`user-view-${currentRow.id}`}

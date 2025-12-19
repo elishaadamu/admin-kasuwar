@@ -6,7 +6,9 @@ import { ContentSection } from '../components/content-section'
 import { AccountForm } from './account-form'
 
 export function SettingsAccount() {
-  const { login } = useAuth()
+  const { login, user } = useAuth()
+
+
 
   const handleUpdate = async (data: any) => {
     const [firstName, ...lastName] = data.name.split(' ')
@@ -14,33 +16,17 @@ export function SettingsAccount() {
     const payload: Record<string, any> = {
       firstName,
       lastName: lastName.join(' '),
-      email: data.email,
       phone: data.phone,
-      address: data.address,
-      state: data.state,
-      localGovt: data.localGovt,
+      shippingAddress: data.shippingAddress,
+      shippingState: data.shippingState,
+      shippingLga: data.shippingLga,
       gender: data.gender,
       dateOfBirth: data.dob ? new Date(data.dob).toISOString() : undefined,
     }
 
-    if (
-      data.avatar &&
-      data.avatar.length > 0 &&
-      typeof data.avatar !== 'string'
-    ) {
-      const fileToBase64 = (file: File): Promise<string> =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.readAsDataURL(file)
-          reader.onload = () => resolve(reader.result as string)
-          reader.onerror = (error) => reject(error)
-        })
-      payload.passportPhoto = await fileToBase64(data.avatar[0])
-    }
-
     try {
       const response = await axios.put(
-        apiUrl(API_CONFIG.ENDPOINTS.USER.UPDATE),
+        apiUrl(API_CONFIG.ENDPOINTS.USER.UPDATE + user?.id) ,
         payload
       )
       const updatedUser = response.data?.user
@@ -53,6 +39,7 @@ export function SettingsAccount() {
       toast.error(error.response?.data?.message || 'Failed to update account.')
       console.error('Update Error:', error)
     }
+
   }
 
   return (

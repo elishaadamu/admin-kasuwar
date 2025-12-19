@@ -45,17 +45,19 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <Eye size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(category)
-              setOpen('edit')
-            }}
-          >
-            Edit
-            <DropdownMenuShortcut>
-              <Pencil size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
+          {category.addedBy !== 'vendor' && (
+            <DropdownMenuItem
+              onClick={() => {
+                setCurrentRow(category)
+                setOpen('edit')
+              }}
+            >
+              Edit
+              <DropdownMenuShortcut>
+                <Pencil size={16} />
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(category)

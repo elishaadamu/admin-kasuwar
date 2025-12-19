@@ -24,12 +24,13 @@ export const API_CONFIG = {
       VIEW: '/admin/products/',
     },
     USER: {
-      UPDATE: '/me',
+      UPDATE: '/admin/update-profile/',
       GET_DOWNLINES: '/bdm/entities/',
       CREATE: '/bdm/register-downline',
       SUSPEND_AGENT: '/bdm/suspend-agent',
       CREATE_AGENT: '/agent/create-user',
       SUSPEND_BD: '/bdm/suspend-bd',
+      GET_DETAILS: "/admin/profile/"
     },
     CUSTOMERS: {
       GET_ALL: '/admin/users/',
@@ -100,6 +101,7 @@ export const API_CONFIG = {
     },
     REPORT: {
       BDM_PERFORMANCE: '/report/bdm/my-performance',
+      BD_PERFORMANCE: '/report/bd/my-performance',
     },
     BANNERS: {
       GET_ALL: '/banner',

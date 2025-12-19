@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await axios.get(
         `${apiUrl(API_CONFIG.ENDPOINTS.ADMIN.CURRENT_STATS)}${user.id}`
       )
-      console.log('Fetched app state:', response.data)
+     
       setAppState(response.data)
     } catch (error) {
       console.error('Failed to fetch app state:', error)

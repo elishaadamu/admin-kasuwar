@@ -1,7 +1,6 @@
 import {
   ArrowLeftRight,
   ClipboardList,
-  FileText,
   History,
   LayoutDashboard,
   Package,
@@ -100,14 +99,14 @@ export const sidebarData: SidebarData = {
             { title: 'Manage Developers', url: '/bdm' },
           ],
         },
-        {
-          title: 'Reports & Performance',
-          icon: FileText,
-          items: [
-            { title: 'BDMs Report', url: '/reports/bdms' },
-            { title: 'BDs Report', url: '/reports/bds' },
-          ],
-        },
+        // {
+        //   title: 'Reports & Performance',
+        //   icon: FileText,
+        //   items: [
+        //     { title: 'BDMs Report', url: '/reports/bdms' },
+        //     { title: 'BDs Report', url: '/reports/bds' },
+        //   ],
+        // },
         {
           title: 'Transfers & Withdrawal',
           icon: ArrowLeftRight,
