@@ -9,6 +9,9 @@ export const API_CONFIG = {
       CURRENT_STATS: '/admin/current-stats/',
       TRANSFER: '/admin/transfer/',
       DEBIT: '/admin/debit/',
+      REWARD_CONFIG: '/admin/rewards/config',
+      REWARD_CONFIG_UPDATE: '/admin/rewards/config',
+      REWARD_CONFIG_STATUS: '/admin/rewards/config',
     },
     CATEGORY: {
       CREATE: '/category/',
@@ -122,6 +125,31 @@ export const API_CONFIG = {
       SUSPEND: '/admin/suspend-agent/',
       UNSUSPEND: '/admin/unsuspend-agent/',
       DELETE: '/admin/delete-agent/',
+    },
+    TRANSACTIONS: {
+      GET_ALL: '/admin/transactions',
+      GET_SINGLE: '/admin/transactions/',
+      ANALYTICS: '/admin/transactions/analytics/dashboard',
+      DELETE: '/admin/transactions/',
+    },
+    REGIONAL: {
+      SET_TEAM_LEAD: '/admin/regional/management/team-lead',
+      ASSIGN_MEMBER: '/admin/regional/management/assign-member',
+      REASSIGN_MEMBER: '/admin/regional/management/reassign-member',
+      GET_ALL_ZONES: '/admin/regional/zones',
+      GET_ZONE_DETAILS: '/admin/regional/zones/', // append {zoneId}
+      GET_ZONE_TEAMS: '/admin/regional/zones/', // append {zoneId}/teams
+      GET_TEAM_MEMBERS: '/team-members/team/', // append {teamId}
+      DELETE_TEAM_MEMBER: '/team-members/', // append {memberId}
+      ASSIGN_ZONE_LEADER: '/admin/regional/zones/', // append {zoneId}/leader
+      GET_ZONE_METRICS: '/admin/regional/zones/', // append {zoneId}/metrics
+      GET_REGION_STATS: '/admin/regional/management/regions/', // append {zoneId}/details
+    },
+    WALLET: {
+      GET_ALL_REGIONAL: '/zone-wallet/regional/all',
+      GET_ZONE_TEAMS_WALLET: '/zone-wallet/regional/', // append {zoneId}/teams
+      GET_ZONE_WALLET: '/zone-wallet/regional/', // append {zoneId}
+      GET_TEAM_WALLET: '/zone-wallet/team/', // append {teamId}
     },
   },
 }

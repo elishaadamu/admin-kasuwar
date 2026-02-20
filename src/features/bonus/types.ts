@@ -1,20 +1,3 @@
-export interface Transaction {
-  _id: string
-  amount: number
-  type: string
-  status: 'pending' | 'success' | 'failed'
-  reference: string
-  description: string
-  userModel: string
-  userId: {
-    _id: string
-    fullName: string
-    email: string
-  }
-  createdAt: string
-  updatedAt: string
-}
-
 export interface DeliveryRequest {
   _id: string
   createdAt: string
@@ -33,6 +16,6 @@ export interface DeliveryRequest {
   senderName: string
   senderPhone: string
   senderState: string
-  status: 'pending' | 'cancelled' | 'approved' | 'delivered'
+  status: 'pending' | 'cancelled' | 'approved' | 'delivered' // Example statuses, adjust as needed
   updatedAt: string
 }

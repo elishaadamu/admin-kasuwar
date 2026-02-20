@@ -5,8 +5,9 @@ import {
   LayoutDashboard,
   Package,
   Settings,
-  UserCog,
+  UserCog,  
   ImageIcon,
+  Coins,
 } from 'lucide-react'
 import { UserPlus } from 'lucide-react'
 import logo from '@/assets/logo.png'
@@ -97,6 +98,8 @@ export const sidebarData: SidebarData = {
               url: '/agents',
             },
             { title: 'Manage Developers', url: '/bdm' },
+            { title: 'Manage Team members', url: '/team-members' },
+            { title: 'Transactions', url: '/transactions' },
           ],
         },
         // {
@@ -112,6 +115,7 @@ export const sidebarData: SidebarData = {
           icon: ArrowLeftRight,
           items: [
             { title: 'Fund/Debit Wallet', url: '/fund-debit' },
+         
             // { title: 'History', url: '/transaction-history' },
             {
               title: 'Withdrawal Requests',
@@ -131,6 +135,11 @@ export const sidebarData: SidebarData = {
           icon: ImageIcon,
           url: '/banners',
         },
+        {
+          title: "Bonus",
+          icon: Coins,
+          url: "/bonus"
+        }
       ],
     },
     {

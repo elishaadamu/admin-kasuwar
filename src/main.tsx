@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios'
 import {
   QueryCache,
   QueryClient,
@@ -18,6 +18,21 @@ import { ThemeProvider } from './context/theme-provider'
 import { routeTree } from './routeTree.gen'
 // Styles
 import './styles/index.css'
+// Set default configuration for axios
+axios.defaults.withCredentials = true
+
+// Add a response interceptor to handle 401 errors globally
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      toast.error('Session expired. Please log in again.')
+      useAuthStore.getState().auth.reset()
+      window.location.href = '/sign-in'
+    }
+    return Promise.reject(error)
+  }
+)
 
 const queryClient = new QueryClient({
   defaultOptions: {

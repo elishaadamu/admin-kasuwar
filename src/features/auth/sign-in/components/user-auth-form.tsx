@@ -57,7 +57,8 @@ export function UserAuthForm({
     try {
       const response = await axios.post(
         apiUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNIN),
-        data
+        data,
+        { withCredentials: true }
       )
       console.log(response.data)
       const user = response.data

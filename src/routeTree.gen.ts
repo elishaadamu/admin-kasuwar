@@ -31,7 +31,9 @@ import { Route as AuthenticatedWithdrawalRequestsIndexRouteImport } from './rout
 import { Route as AuthenticatedVendorsIndexRouteImport } from './routes/_authenticated/vendors/index'
 import { Route as AuthenticatedVendorProductsIndexRouteImport } from './routes/_authenticated/vendor-products/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTransactionsIndexRouteImport } from './routes/_authenticated/transactions/index'
 import { Route as AuthenticatedTransactionHistoryIndexRouteImport } from './routes/_authenticated/transaction-history/index'
+import { Route as AuthenticatedTeamMembersIndexRouteImport } from './routes/_authenticated/team-members/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettlementIndexRouteImport } from './routes/_authenticated/settlement/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
@@ -45,6 +47,7 @@ import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedCouponsIndexRouteImport } from './routes/_authenticated/coupons/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedCategoryIndexRouteImport } from './routes/_authenticated/category/index'
+import { Route as AuthenticatedBonusIndexRouteImport } from './routes/_authenticated/bonus/index'
 import { Route as AuthenticatedBdsVerificationIndexRouteImport } from './routes/_authenticated/bds-verification/index'
 import { Route as AuthenticatedBdmIndexRouteImport } from './routes/_authenticated/bdm/index'
 import { Route as AuthenticatedBannersIndexRouteImport } from './routes/_authenticated/banners/index'
@@ -173,10 +176,22 @@ const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTransactionsIndexRoute =
+  AuthenticatedTransactionsIndexRouteImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTransactionHistoryIndexRoute =
   AuthenticatedTransactionHistoryIndexRouteImport.update({
     id: '/transaction-history/',
     path: '/transaction-history/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTeamMembersIndexRoute =
+  AuthenticatedTeamMembersIndexRouteImport.update({
+    id: '/team-members/',
+    path: '/team-members/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
@@ -255,6 +270,11 @@ const AuthenticatedCategoryIndexRoute =
     path: '/category/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBonusIndexRoute = AuthenticatedBonusIndexRouteImport.update({
+  id: '/bonus/',
+  path: '/bonus/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBdsVerificationIndexRoute =
   AuthenticatedBdsVerificationIndexRouteImport.update({
     id: '/bds-verification/',
@@ -373,6 +393,7 @@ export interface FileRoutesByFullPath {
   '/banners': typeof AuthenticatedBannersIndexRoute
   '/bdm': typeof AuthenticatedBdmIndexRoute
   '/bds-verification': typeof AuthenticatedBdsVerificationIndexRoute
+  '/bonus': typeof AuthenticatedBonusIndexRoute
   '/category': typeof AuthenticatedCategoryIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/coupons': typeof AuthenticatedCouponsIndexRoute
@@ -386,7 +407,9 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/settlement': typeof AuthenticatedSettlementIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/team-members': typeof AuthenticatedTeamMembersIndexRoute
   '/transaction-history': typeof AuthenticatedTransactionHistoryIndexRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/vendor-products': typeof AuthenticatedVendorProductsIndexRoute
   '/vendors': typeof AuthenticatedVendorsIndexRoute
@@ -422,6 +445,7 @@ export interface FileRoutesByTo {
   '/banners': typeof AuthenticatedBannersIndexRoute
   '/bdm': typeof AuthenticatedBdmIndexRoute
   '/bds-verification': typeof AuthenticatedBdsVerificationIndexRoute
+  '/bonus': typeof AuthenticatedBonusIndexRoute
   '/category': typeof AuthenticatedCategoryIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/coupons': typeof AuthenticatedCouponsIndexRoute
@@ -435,7 +459,9 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/settlement': typeof AuthenticatedSettlementIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/team-members': typeof AuthenticatedTeamMembersIndexRoute
   '/transaction-history': typeof AuthenticatedTransactionHistoryIndexRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/vendor-products': typeof AuthenticatedVendorProductsIndexRoute
   '/vendors': typeof AuthenticatedVendorsIndexRoute
@@ -476,6 +502,7 @@ export interface FileRoutesById {
   '/_authenticated/banners/': typeof AuthenticatedBannersIndexRoute
   '/_authenticated/bdm/': typeof AuthenticatedBdmIndexRoute
   '/_authenticated/bds-verification/': typeof AuthenticatedBdsVerificationIndexRoute
+  '/_authenticated/bonus/': typeof AuthenticatedBonusIndexRoute
   '/_authenticated/category/': typeof AuthenticatedCategoryIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/coupons/': typeof AuthenticatedCouponsIndexRoute
@@ -489,7 +516,9 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/settlement/': typeof AuthenticatedSettlementIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/team-members/': typeof AuthenticatedTeamMembersIndexRoute
   '/_authenticated/transaction-history/': typeof AuthenticatedTransactionHistoryIndexRoute
+  '/_authenticated/transactions/': typeof AuthenticatedTransactionsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/vendor-products/': typeof AuthenticatedVendorProductsIndexRoute
   '/_authenticated/vendors/': typeof AuthenticatedVendorsIndexRoute
@@ -529,6 +558,7 @@ export interface FileRouteTypes {
     | '/banners'
     | '/bdm'
     | '/bds-verification'
+    | '/bonus'
     | '/category'
     | '/chats'
     | '/coupons'
@@ -542,7 +572,9 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/settlement'
     | '/tasks'
+    | '/team-members'
     | '/transaction-history'
+    | '/transactions'
     | '/users'
     | '/vendor-products'
     | '/vendors'
@@ -578,6 +610,7 @@ export interface FileRouteTypes {
     | '/banners'
     | '/bdm'
     | '/bds-verification'
+    | '/bonus'
     | '/category'
     | '/chats'
     | '/coupons'
@@ -591,7 +624,9 @@ export interface FileRouteTypes {
     | '/settings'
     | '/settlement'
     | '/tasks'
+    | '/team-members'
     | '/transaction-history'
+    | '/transactions'
     | '/users'
     | '/vendor-products'
     | '/vendors'
@@ -631,6 +666,7 @@ export interface FileRouteTypes {
     | '/_authenticated/banners/'
     | '/_authenticated/bdm/'
     | '/_authenticated/bds-verification/'
+    | '/_authenticated/bonus/'
     | '/_authenticated/category/'
     | '/_authenticated/chats/'
     | '/_authenticated/coupons/'
@@ -644,7 +680,9 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/settlement/'
     | '/_authenticated/tasks/'
+    | '/_authenticated/team-members/'
     | '/_authenticated/transaction-history/'
+    | '/_authenticated/transactions/'
     | '/_authenticated/users/'
     | '/_authenticated/vendor-products/'
     | '/_authenticated/vendors/'
@@ -824,11 +862,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/transactions/': {
+      id: '/_authenticated/transactions/'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof AuthenticatedTransactionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/transaction-history/': {
       id: '/_authenticated/transaction-history/'
       path: '/transaction-history'
       fullPath: '/transaction-history'
       preLoaderRoute: typeof AuthenticatedTransactionHistoryIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/team-members/': {
+      id: '/_authenticated/team-members/'
+      path: '/team-members'
+      fullPath: '/team-members'
+      preLoaderRoute: typeof AuthenticatedTeamMembersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks/': {
@@ -920,6 +972,13 @@ declare module '@tanstack/react-router' {
       path: '/category'
       fullPath: '/category'
       preLoaderRoute: typeof AuthenticatedCategoryIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/bonus/': {
+      id: '/_authenticated/bonus/'
+      path: '/bonus'
+      fullPath: '/bonus'
+      preLoaderRoute: typeof AuthenticatedBonusIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/bds-verification/': {
@@ -1068,6 +1127,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBannersIndexRoute: typeof AuthenticatedBannersIndexRoute
   AuthenticatedBdmIndexRoute: typeof AuthenticatedBdmIndexRoute
   AuthenticatedBdsVerificationIndexRoute: typeof AuthenticatedBdsVerificationIndexRoute
+  AuthenticatedBonusIndexRoute: typeof AuthenticatedBonusIndexRoute
   AuthenticatedCategoryIndexRoute: typeof AuthenticatedCategoryIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedCouponsIndexRoute: typeof AuthenticatedCouponsIndexRoute
@@ -1080,7 +1140,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedSettlementIndexRoute: typeof AuthenticatedSettlementIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedTeamMembersIndexRoute: typeof AuthenticatedTeamMembersIndexRoute
   AuthenticatedTransactionHistoryIndexRoute: typeof AuthenticatedTransactionHistoryIndexRoute
+  AuthenticatedTransactionsIndexRoute: typeof AuthenticatedTransactionsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedVendorProductsIndexRoute: typeof AuthenticatedVendorProductsIndexRoute
   AuthenticatedVendorsIndexRoute: typeof AuthenticatedVendorsIndexRoute
@@ -1098,6 +1160,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBdmIndexRoute: AuthenticatedBdmIndexRoute,
   AuthenticatedBdsVerificationIndexRoute:
     AuthenticatedBdsVerificationIndexRoute,
+  AuthenticatedBonusIndexRoute: AuthenticatedBonusIndexRoute,
   AuthenticatedCategoryIndexRoute: AuthenticatedCategoryIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedCouponsIndexRoute: AuthenticatedCouponsIndexRoute,
@@ -1112,8 +1175,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedSettlementIndexRoute: AuthenticatedSettlementIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedTeamMembersIndexRoute: AuthenticatedTeamMembersIndexRoute,
   AuthenticatedTransactionHistoryIndexRoute:
     AuthenticatedTransactionHistoryIndexRoute,
+  AuthenticatedTransactionsIndexRoute: AuthenticatedTransactionsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedVendorProductsIndexRoute: AuthenticatedVendorProductsIndexRoute,
   AuthenticatedVendorsIndexRoute: AuthenticatedVendorsIndexRoute,
