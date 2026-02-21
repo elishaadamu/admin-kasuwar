@@ -27,16 +27,26 @@ export function UsersDeleteDialog({
 
   const handleDelete = async () => {
     if (!user) return
+
+    let endpoint = ''
+    if (currentRow.role === 'bdm' || currentRow.role === 'manager') {
+      endpoint = API_CONFIG.ENDPOINTS.MANAGERS.DELETE
+    } else if (currentRow.role === 'bd') {
+      endpoint = API_CONFIG.ENDPOINTS.USER.DELETE_BD
+    } else if (currentRow.role === 'agent') {
+      endpoint = API_CONFIG.ENDPOINTS.USER.DELETE_AGENT
+    } else {
+      endpoint = API_CONFIG.ENDPOINTS.MANAGERS.DELETE
+    }
+
     toast.promise(
       axios.delete(
-        `${apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.DELETE)}${user.id}/${
-          currentRow._id
-        }`
+        `${apiUrl(endpoint)}${user.id}/${currentRow._id || currentRow.id}`
       ),
       {
         loading: 'Deleting Manager...',
         success: () => {
-          removeUser(currentRow._id)
+          removeUser(currentRow._id || currentRow.id)
           onOpenChange(false)
           return 'Manager deleted successfully.'
         },

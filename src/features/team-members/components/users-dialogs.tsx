@@ -4,6 +4,7 @@ import { UsersInviteDialog } from './users-invite-dialog'
 import { useUsers } from './users-provider'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { TeamLeadManagement } from './team-lead-management'
+import { ZoneLeaderManagement } from './zone-leader-management'
 
 export function UsersDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useUsers()
@@ -20,6 +21,22 @@ export function UsersDialogs() {
         open={open === 'invite'}
         onOpenChange={() => setOpen('invite')}
       />
+
+      {/* Regional Leader Management Dialog */}
+      <Dialog
+        open={open === 'regional-leader'}
+        onOpenChange={(val) => setOpen(val ? 'regional-leader' : null)}
+      >
+        <DialogContent className='sm:max-w-2xl'>
+          <DialogHeader>
+            <DialogTitle>Regional Leader Management</DialogTitle>
+            <DialogDescription>
+              Assign, update, or remove a leader for a geopolitical zone.
+            </DialogDescription>
+          </DialogHeader>
+          <ZoneLeaderManagement onSuccess={() => setOpen(null)} />
+        </DialogContent>
+      </Dialog>
 
       {currentRow && (
         <>

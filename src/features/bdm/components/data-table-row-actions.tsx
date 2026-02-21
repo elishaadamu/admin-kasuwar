@@ -39,9 +39,26 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
   const handleStatusChange = async (status: UserStatus) => {
     const isSuspending = status === 'suspended'
-    const endpoint = isSuspending
-      ? API_CONFIG.ENDPOINTS.MANAGERS.SUSPEND
-      : API_CONFIG.ENDPOINTS.MANAGERS.UNSUSPEND
+    let endpoint = ''
+
+    if (user.role === 'bdm' || user.role === 'manager') {
+      endpoint = isSuspending
+        ? API_CONFIG.ENDPOINTS.MANAGERS.SUSPEND
+        : API_CONFIG.ENDPOINTS.MANAGERS.UNSUSPEND
+    } else if (user.role === 'bd') {
+      endpoint = isSuspending
+        ? API_CONFIG.ENDPOINTS.USER.SUSPEND_BD
+        : API_CONFIG.ENDPOINTS.USER.UNSUSPEND_BD
+    } else if (user.role === 'agent') {
+      endpoint = isSuspending
+        ? API_CONFIG.ENDPOINTS.USER.SUSPEND_AGENT
+        : API_CONFIG.ENDPOINTS.USER.UNSUSPEND_AGENT
+    } else {
+      // Fallback
+      endpoint = isSuspending
+        ? API_CONFIG.ENDPOINTS.MANAGERS.SUSPEND
+        : API_CONFIG.ENDPOINTS.MANAGERS.UNSUSPEND
+    }
 
     const prevStatus = user.status
     // Optimistic update
@@ -49,7 +66,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
     try {
       await toast.promise(
-        axios.put(`${apiUrl(endpoint)}${authUser.id}/${user.id}`),
+        axios.put(`${apiUrl(endpoint)}${authUser.id}/${user._id || user.id}`),
         {
           loading: `Updating status to ${status}...`,
           success: `Manager has been ${
@@ -80,13 +97,13 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           <DropdownMenuItem
             onClick={() =>
               handleStatusChange(
-                user.status === 'suspended' ? 'active' : 'suspended'
+                user.status === 'suspended' || user.suspended ? 'active' : 'suspended'
               )
             }
           >
-            {user.status === 'suspended' ? 'Unsuspend' : 'Suspend'}
+            {user.status === 'suspended' || user.suspended ? 'Unsuspend' : 'Suspend'}
             <DropdownMenuShortcut>
-              {user.status === 'suspended' ? (
+              {user.status === 'suspended' || user.suspended ? (
                 <UserCheck size={16} />
               ) : (
                 <UserX size={16} />

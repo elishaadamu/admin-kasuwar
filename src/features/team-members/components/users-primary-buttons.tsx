@@ -6,8 +6,8 @@ export function UsersPrimaryButtons() {
   const { setOpen } = useUsers()
   return (
     <div className='flex gap-2'>
-      <Button className='space-x-1' onClick={() => setOpen('add')}>
-        <span>Add Managers</span> <UserPlus size={18} />
+      <Button variant='outline' className='space-x-1' onClick={() => setOpen('regional-leader')}>
+        <span>Add Regional Leaders</span> <UserPlus size={18} />
       </Button>
     </div>
   )

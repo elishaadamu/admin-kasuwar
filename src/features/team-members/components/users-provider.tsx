@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type User } from '../data/schema'
 
-type UsersDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'lead'
+type UsersDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'lead' | 'regional-leader'
 
 type UsersContextType = {
   open: UsersDialogType | null

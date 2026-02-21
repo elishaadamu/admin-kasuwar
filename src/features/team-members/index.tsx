@@ -16,7 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { TeamLeadManagement } from './components/team-lead-management'
-import { ZoneLeaderManagement } from './components/zone-leader-management'
 import { WalletManagement } from './components/wallet-management'
 import { RegionalStatistics } from './components/regional-statistics'
 import { type User } from './data/schema'
@@ -147,7 +146,6 @@ export function TeamMembers() {
                 <SelectItem value='wallets'>Wallets</SelectItem>
                 <SelectItem value='managers'>Team Members</SelectItem>
                 <SelectItem value='team-assignments'>Team Assignments</SelectItem>
-                <SelectItem value='zone-leaders'>Regional Leaders</SelectItem>
                 <SelectItem value='regional-stats'>Regional Stats</SelectItem>
               </SelectContent>
             </Select>
@@ -156,7 +154,6 @@ export function TeamMembers() {
             <TabsTrigger value='wallets'>Wallets</TabsTrigger>
             <TabsTrigger value='managers'>Team Members</TabsTrigger>
             <TabsTrigger value='team-assignments'>Team Assignments</TabsTrigger>
-            <TabsTrigger value='zone-leaders'>Regional Leaders</TabsTrigger>
             <TabsTrigger value='regional-stats'>Regional Stats</TabsTrigger>
           </TabsList>
           <TabsContent value='wallets' className='space-y-4'>
@@ -233,9 +230,6 @@ export function TeamMembers() {
                
               </div>
             </Tabs>
-          </TabsContent>
-          <TabsContent value='zone-leaders' className='space-y-4'>
-            <ZoneLeaderManagement onSuccess={() => setActiveTab('managers')} />
           </TabsContent>
           <TabsContent value='regional-stats' className='space-y-4'>
             <RegionalStatistics />

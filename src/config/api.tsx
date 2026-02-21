@@ -30,9 +30,13 @@ export const API_CONFIG = {
       UPDATE: '/admin/update-profile/',
       GET_DOWNLINES: '/bdm/entities/',
       CREATE: '/bdm/register-downline',
-      SUSPEND_AGENT: '/bdm/suspend-agent',
+      SUSPEND_AGENT: '/bdm/suspend-agent/',
+      UNSUSPEND_AGENT: '/bdm/unsuspend-agent/',
+      DELETE_AGENT: '/bdm/delete-agent/',
       CREATE_AGENT: '/agent/create-user',
-      SUSPEND_BD: '/bdm/suspend-bd',
+      SUSPEND_BD: '/bdm/suspend-bd/',
+      UNSUSPEND_BD: '/bdm/unsuspend-bd/',
+      DELETE_BD: '/bdm/delete-bd/',
       GET_DETAILS: "/admin/profile/"
     },
     CUSTOMERS: {
@@ -126,6 +130,13 @@ export const API_CONFIG = {
       UNSUSPEND: '/admin/unsuspend-agent/',
       DELETE: '/admin/delete-agent/',
     },
+    SALES_MANAGER: {
+      GET_ALL: '/admin/sm/', // append {adminId}
+      GET_SINGLE: '/admin/detailed-sm/', // append {adminUserId}/{managerId}
+      SUSPEND: '/admin/suspend-sales-manager/', // append {adminUserId}/{managerId}
+      UNSUSPEND: '/admin/unsuspend-sales-manager/', // append {adminUserId}/{managerId}
+      DELETE: '/admin/delete-sales-manager/', // append {adminUserId}/{managerId}
+    },
     TRANSACTIONS: {
       GET_ALL: '/admin/transactions',
       GET_SINGLE: '/admin/transactions/',
@@ -143,7 +154,8 @@ export const API_CONFIG = {
       DELETE_TEAM_MEMBER: '/team-members/', // append {memberId}
       ASSIGN_ZONE_LEADER: '/admin/regional/zones/', // append {zoneId}/leader
       GET_ZONE_METRICS: '/admin/regional/zones/', // append {zoneId}/metrics
-      GET_REGION_STATS: '/admin/regional/management/regions/', // append {zoneId}/details
+      GET_REGION_STATS: '/admin/regional/management/region/', // append {zoneId}/details
+      GET_REGIONS_STATS: '/admin/regional/management/regions-stats', // general overview
     },
     WALLET: {
       GET_ALL_REGIONAL: '/zone-wallet/regional/all',
