@@ -83,13 +83,6 @@ export function BDM() {
     }
   }, [activeTab])
 
-  // Determine which users array & setter the Provider should use based on the active tab
-  const getCurrentUsers = () => {
-    switch (activeTab) {
-      case 'sm': return smUsers
-      default: return bdmUsers
-    }
-  }
 
   const setCurrentUsers = (fn: (prev: User[]) => User[]) => {
     switch (activeTab) {

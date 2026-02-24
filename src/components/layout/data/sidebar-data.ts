@@ -136,7 +136,7 @@ export const sidebarData: SidebarData = {
           url: '/banners',
         },
         {
-          title: "Bonus",
+          title: "Bonus and Rewards",
           icon: Coins,
           url: "/bonus"
         }

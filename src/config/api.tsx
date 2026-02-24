@@ -12,6 +12,7 @@ export const API_CONFIG = {
       REWARD_CONFIG: '/admin/rewards/config',
       REWARD_CONFIG_UPDATE: '/admin/rewards/config',
       REWARD_CONFIG_STATUS: '/admin/rewards/config',
+      REWARD_ACTIVITIES: '/admin/rewards/activities',
     },
     CATEGORY: {
       CREATE: '/category/',

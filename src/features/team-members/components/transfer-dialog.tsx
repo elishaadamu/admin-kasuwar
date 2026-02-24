@@ -55,7 +55,7 @@ export function TransferDialog({
         ),
         {
           loading: 'Processing transfer...',
-          success: (res) => {
+          success: () => {
           
             return 'Transfer completed successfully.'
           },
