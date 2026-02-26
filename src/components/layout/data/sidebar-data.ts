@@ -51,7 +51,10 @@ export const sidebarData: SidebarData = {
         {
           title: 'Order Management',
           icon: Package,
-          items: [{ title: 'All Orders', url: '/orders' }],
+          items: [
+            { title: 'All Orders', url: '/orders' },
+            { title: 'POS Orders', url: '/pos' },
+          ],
         },
 
         // {

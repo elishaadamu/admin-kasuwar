@@ -4,7 +4,7 @@ import axios from 'axios'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
 import { API_CONFIG, apiUrl } from '@/config/api'
-import { UserCheck, UserX, Trash2, Eye, Loader2 } from 'lucide-react'
+import { UserCheck, UserX, Trash2, Eye, Loader2, BanknoteIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/context/auth-context'
 import { Button } from '@/components/ui/button'
@@ -26,6 +26,8 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { type User, type UserStatus } from '../data/schema'
+import { DebitDialog } from './debit-dialog'
+import { TransferDialog } from './transfer-dialog'
 import { useUsers } from './users-provider'
 
 type SmRowActionsProps = {
@@ -39,6 +41,8 @@ export function SmRowActions({ row }: SmRowActionsProps) {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [details, setDetails] = useState<any>(null)
   const [isLoadingDetails, setIsLoadingDetails] = useState(false)
+  const [showTransferDialog, setShowTransferDialog] = useState(false)
+  const [showDebitDialog, setShowDebitDialog] = useState(false)
 
   if (!authUser) return null
 
@@ -166,6 +170,18 @@ export function SmRowActions({ row }: SmRowActionsProps) {
               <Trash2 size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setShowTransferDialog(true)}>
+            Transfer Funds
+            <DropdownMenuShortcut>
+              <BanknoteIcon size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setShowDebitDialog(true)}>
+            Debit Funds
+            <DropdownMenuShortcut>
+              <BanknoteIcon size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -226,6 +242,20 @@ export function SmRowActions({ row }: SmRowActionsProps) {
           )}
         </DialogContent>
       </Dialog>
+
+      <TransferDialog
+        managerId={user._id || user.id}
+        managerName={user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim()}
+        open={showTransferDialog}
+        onOpenChange={setShowTransferDialog}
+      />
+
+      <DebitDialog
+        managerId={user._id || user.id}
+        managerName={user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim()}
+        open={showDebitDialog}
+        onOpenChange={setShowDebitDialog}
+      />
     </div>
   )
 }

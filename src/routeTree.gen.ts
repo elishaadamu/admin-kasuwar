@@ -38,6 +38,7 @@ import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedSettlementIndexRouteImport } from './routes/_authenticated/settlement/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
+import { Route as AuthenticatedPosIndexRouteImport } from './routes/_authenticated/pos/index'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedFundDebitIndexRouteImport } from './routes/_authenticated/fund-debit/index'
@@ -217,6 +218,11 @@ const AuthenticatedProductsIndexRoute =
     path: '/products/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPosIndexRoute = AuthenticatedPosIndexRouteImport.update({
+  id: '/pos/',
+  path: '/pos/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedOrdersIndexRoute =
   AuthenticatedOrdersIndexRouteImport.update({
     id: '/orders/',
@@ -403,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/fund-debit': typeof AuthenticatedFundDebitIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/pos': typeof AuthenticatedPosIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/settlement': typeof AuthenticatedSettlementIndexRoute
@@ -455,6 +462,7 @@ export interface FileRoutesByTo {
   '/fund-debit': typeof AuthenticatedFundDebitIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/pos': typeof AuthenticatedPosIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/settlement': typeof AuthenticatedSettlementIndexRoute
@@ -512,6 +520,7 @@ export interface FileRoutesById {
   '/_authenticated/fund-debit/': typeof AuthenticatedFundDebitIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/_authenticated/pos/': typeof AuthenticatedPosIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/settlement/': typeof AuthenticatedSettlementIndexRoute
@@ -568,6 +577,7 @@ export interface FileRouteTypes {
     | '/fund-debit'
     | '/help-center'
     | '/orders'
+    | '/pos'
     | '/products'
     | '/settings/'
     | '/settlement'
@@ -620,6 +630,7 @@ export interface FileRouteTypes {
     | '/fund-debit'
     | '/help-center'
     | '/orders'
+    | '/pos'
     | '/products'
     | '/settings'
     | '/settlement'
@@ -676,6 +687,7 @@ export interface FileRouteTypes {
     | '/_authenticated/fund-debit/'
     | '/_authenticated/help-center/'
     | '/_authenticated/orders/'
+    | '/_authenticated/pos/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
     | '/_authenticated/settlement/'
@@ -911,6 +923,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/pos/': {
+      id: '/_authenticated/pos/'
+      path: '/pos'
+      fullPath: '/pos'
+      preLoaderRoute: typeof AuthenticatedPosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/orders/': {
       id: '/_authenticated/orders/'
       path: '/orders'
@@ -1137,6 +1156,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFundDebitIndexRoute: typeof AuthenticatedFundDebitIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
+  AuthenticatedPosIndexRoute: typeof AuthenticatedPosIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedSettlementIndexRoute: typeof AuthenticatedSettlementIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
@@ -1172,6 +1192,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFundDebitIndexRoute: AuthenticatedFundDebitIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
+  AuthenticatedPosIndexRoute: AuthenticatedPosIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedSettlementIndexRoute: AuthenticatedSettlementIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,

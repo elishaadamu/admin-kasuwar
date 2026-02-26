@@ -164,6 +164,10 @@ export const API_CONFIG = {
       GET_ZONE_WALLET: '/zone-wallet/regional/', // append {zoneId}
       GET_TEAM_WALLET: '/zone-wallet/team/', // append {teamId}
     },
+    POS: {
+      VERIFY_PAYMENT: '/pos/admin/verify-payment',
+      GET_ALL_ORDERS: '/pos/admin/all-orders',
+    },
   },
 }
 
