@@ -1,3 +1,4 @@
+import { HRActionDialog } from './hr-action-dialog'
 import { UsersActionDialog } from './users-action-dialog'
 import { UsersDeleteDialog } from './users-delete-dialog'
 import { UsersInviteDialog } from './users-invite-dialog'
@@ -11,6 +12,12 @@ export function UsersDialogs() {
         key='user-add'
         open={open === 'add'}
         onOpenChange={() => setOpen('add')}
+      />
+
+      <HRActionDialog
+        key='hr-add'
+        open={open === 'add-hr'}
+        onOpenChange={() => setOpen('add-hr')}
       />
 
       <UsersInviteDialog

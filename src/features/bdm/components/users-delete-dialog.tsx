@@ -31,6 +31,8 @@ export function UsersDeleteDialog({
     let endpoint = ''
     if (currentRow.role === 'bdm' || currentRow.role === 'manager') {
       endpoint = API_CONFIG.ENDPOINTS.MANAGERS.DELETE
+    } else if (currentRow.role === 'hr') {
+      endpoint = API_CONFIG.ENDPOINTS.HR.DELETE
     } else if (currentRow.role === 'bd') {
       endpoint = API_CONFIG.ENDPOINTS.USER.DELETE_BD
     } else if (currentRow.role === 'agent') {
@@ -39,31 +41,35 @@ export function UsersDeleteDialog({
       endpoint = API_CONFIG.ENDPOINTS.MANAGERS.DELETE
     }
 
+    const label = currentRow.role === 'hr' ? 'HR' : 'Manager'
+
     toast.promise(
       axios.delete(
         `${apiUrl(endpoint)}${user.id}/${currentRow._id || currentRow.id}`
       ),
       {
-        loading: 'Deleting Manager...',
+        loading: `Deleting ${label}...`,
         success: () => {
           removeUser(currentRow._id || currentRow.id)
           onOpenChange(false)
-          return 'Manager deleted successfully.'
+          return `${label} deleted successfully.`
         },
         error: (error) => {
-          console.error('Error deleting manager:', error)
-          return error.response?.data?.message || 'Failed to delete manager.'
+          console.error(`Error deleting ${label}:`, error)
+          return error.response?.data?.message || `Failed to delete ${label.toLowerCase()}.`
         },
       }
     )
   }
+
+  const label = currentRow.role === 'hr' ? 'HR' : 'Manager'
 
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      title='Delete Manager'
+      title={`Delete ${label}`}
       desc={
         <p>
           Are you sure you want to delete <b>{currentRow.name}</b>? This action

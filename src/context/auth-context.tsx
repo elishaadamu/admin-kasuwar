@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     localStorage.clear() // Clear all localStorage for this domain
+    setAppState(null) // Added to clear the app state
     setUser(null)
   }, [])
 

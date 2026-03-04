@@ -45,6 +45,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       endpoint = isSuspending
         ? API_CONFIG.ENDPOINTS.MANAGERS.SUSPEND
         : API_CONFIG.ENDPOINTS.MANAGERS.UNSUSPEND
+    } else if (user.role === 'hr') {
+      endpoint = isSuspending
+        ? API_CONFIG.ENDPOINTS.HR.SUSPEND
+        : API_CONFIG.ENDPOINTS.HR.UNSUSPEND
     } else if (user.role === 'bd') {
       endpoint = isSuspending
         ? API_CONFIG.ENDPOINTS.USER.SUSPEND_BD
@@ -64,12 +68,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     // Optimistic update
     updateUser(user.id, { status })
 
+    const label = user.role === 'hr' ? 'HR' : 'Manager'
+
     try {
       await toast.promise(
         axios.put(`${apiUrl(endpoint)}${authUser.id}/${user._id || user.id}`),
         {
           loading: `Updating status to ${status}...`,
-          success: `Manager has been ${
+          success: `${label} has been ${
             isSuspending ? 'suspended' : 'unsuspended'
           }.`,
           error: `Failed to update status.`,
@@ -121,24 +127,28 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <Trash2 size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => setShowTransferDialog(true)}>
-            Transfer Funds
-            <DropdownMenuShortcut>
-              <BanknoteIcon size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => setShowDebitDialog(true)}>
-            Debit Funds
-            <DropdownMenuShortcut>
-              <BanknoteIcon size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => setShowSendReportDialog(true)}>
-            Send Report
-            <DropdownMenuShortcut>
-              <Send size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
+          {user.role !== 'hr' && (
+            <>
+              <DropdownMenuItem onSelect={() => setShowTransferDialog(true)}>
+                Transfer Funds
+                <DropdownMenuShortcut>
+                  <BanknoteIcon size={16} />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setShowDebitDialog(true)}>
+                Debit Funds
+                <DropdownMenuShortcut>
+                  <BanknoteIcon size={16} />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setShowSendReportDialog(true)}>
+                Send Report
+                <DropdownMenuShortcut>
+                  <Send size={16} />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

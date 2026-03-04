@@ -45,6 +45,7 @@ export function Dashboard() {
   }
 
   const fetchUsers = async () => {
+    if (!user?.id) return
     setIsLoading(true)
     try {
       const responseCustomers = await axios.get(ENDPOINTS.customers)

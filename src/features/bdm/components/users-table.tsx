@@ -38,6 +38,7 @@ type DataTableProps = {
   search: Record<string, unknown>
   navigate: NavigateFn
   isLoading: boolean
+  loadingText?: string
 }
 
 export function UsersTable({
@@ -45,6 +46,7 @@ export function UsersTable({
   search,
   navigate,
   isLoading,
+  loadingText = 'Loading business developers...',
 }: DataTableProps) {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
@@ -187,7 +189,7 @@ export function UsersTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  {isLoading ? 'Loading business developers...' : 'No results.'}
+                  {isLoading ? loadingText : 'No results.'}
                 </TableCell>
               </TableRow>
             )}

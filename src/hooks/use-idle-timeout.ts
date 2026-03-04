@@ -38,7 +38,8 @@ export function useIdleTimeout() {
     // Initial check for user data
     const userData = localStorage.getItem('user')
     if (!userData) {
-      handleTimeout()
+      // If no user, just don't start the timer.
+      // Do not call handleTimeout() here as it triggers logout/toasts on the login page.
       return
     }
 

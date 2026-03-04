@@ -168,6 +168,13 @@ export const API_CONFIG = {
       VERIFY_PAYMENT: '/pos/admin/verify-payment',
       GET_ALL_ORDERS: '/pos/admin/all-orders',
     },
+    HR: {
+      CREATE: '/hr/create-hr',
+      GET_ALL: '/hr/all-hr',
+      SUSPEND: '/hr/suspend-hr/',
+      UNSUSPEND: '/hr/unsuspend-hr/',
+      DELETE: '/hr/delete-hr/',
+    },
   },
 }
 

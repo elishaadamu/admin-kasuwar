@@ -13,13 +13,22 @@ export function UsersPrimaryButtons({ activeTab = 'bdm' }: UsersPrimaryButtonsPr
     switch (activeTab) {
       case 'sm': return 'Add Sales Manager'
       case 'bd/bdm': return 'Add BD/BDM'
+      case 'hr': return 'Add HR'
       default: return 'Add Manager'
+    }
+  }
+
+  const handleAdd = () => {
+    if (activeTab === 'hr') {
+      setOpen('add-hr')
+    } else {
+      setOpen('add')
     }
   }
 
   return (
     <div className='flex gap-2'>
-      <Button className='space-x-1' onClick={() => setOpen('add')}>
+      <Button className='space-x-1' onClick={handleAdd}>
         <span>{getLabel()}</span> <UserPlus size={18} />
       </Button>
     </div>

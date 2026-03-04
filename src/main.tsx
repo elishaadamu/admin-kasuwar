@@ -28,6 +28,7 @@ axios.interceptors.response.use(
     if (error.response?.status === 401) {
       toast.error('Session expired. Please log in again.')
       useAuthStore.getState().auth.reset()
+      localStorage.clear() // Added to ensure AuthProvider also resets
       window.location.href = '/sign-in'
     }
     return Promise.reject(error)

@@ -13,6 +13,7 @@ const userRoleSchema = z.union([
   z.literal('admin'),
   z.literal('cashier'),
   z.literal('manager'),
+  z.literal('hr'),
 ])
 
 const userSchema = z.object({

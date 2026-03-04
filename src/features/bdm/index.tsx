@@ -35,9 +35,9 @@ export function BDM() {
   const [smUsers, setSmUsers] = useState<User[]>([])
   const [isSmLoading, setIsSmLoading] = useState(false)
 
-
-
-
+  // HR state
+  const [hrUsers, setHrUsers] = useState<User[]>([])
+  const [isHrLoading, setIsHrLoading] = useState(false)
 
   const fetchBdmUsers = async () => {
     setIsBdmLoading(true)
@@ -68,9 +68,26 @@ export function BDM() {
     }
   }
 
-
-
-
+  const fetchHrUsers = async () => {
+    setIsHrLoading(true)
+    try {
+      const response = await axios.get(
+        apiUrl(API_CONFIG.ENDPOINTS.HR.GET_ALL)
+      )
+      console.log('HR data', response.data)
+      const data = response.data?.hrs || response.data?.hr || []
+      const mappedData = data.map((item: any) => ({
+        ...item,
+        name: item.name || `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'N/A',
+        id: item._id || item.id,
+      }))
+      setHrUsers(mappedData)
+    } catch (error) {
+      console.error('Failed to fetch HR users', error)
+    } finally {
+      setIsHrLoading(false)
+    }
+  }
 
   useEffect(() => {
     fetchBdmUsers()
@@ -81,12 +98,16 @@ export function BDM() {
     if (activeTab === 'sm' && smUsers.length === 0 && !isSmLoading) {
       fetchSmUsers()
     }
+    if (activeTab === 'hr' && hrUsers.length === 0 && !isHrLoading) {
+      fetchHrUsers()
+    }
   }, [activeTab])
 
 
   const setCurrentUsers = (fn: (prev: User[]) => User[]) => {
     switch (activeTab) {
       case 'sm': return setSmUsers(fn)
+      case 'hr': return setHrUsers(fn)
       default: return setBdmUsers(fn)
     }
   }
@@ -122,10 +143,10 @@ export function BDM() {
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>
-              {activeTab === 'sm' ? 'Sales Managers' : 'BD/BDM Managers'}
+              {activeTab === 'sm' ? 'Sales Managers' : activeTab === 'hr' ? 'HR Management' : 'BD/BDM Managers'}
             </h2>
             <p className='text-muted-foreground'>
-              Coordinate managers and their roles here.
+               {activeTab === 'hr' ? 'Manage your HR team and their access.' : 'Coordinate managers and their roles here.'}
             </p>
           </div>
           <UsersPrimaryButtons activeTab={activeTab === 'bdm' ? 'bd/bdm' : activeTab} />
@@ -140,12 +161,14 @@ export function BDM() {
               <SelectContent>
                 <SelectItem value='bdm'>BD/BDM</SelectItem>
                 <SelectItem value='sm'>Sales Managers</SelectItem>
+                <SelectItem value='hr'>HR</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <TabsList className='hidden min-[992px]:flex'>
             <TabsTrigger value='bdm'>BD/BDM</TabsTrigger>
             <TabsTrigger value='sm'>Sales Managers</TabsTrigger>
+            <TabsTrigger value='hr'>HR</TabsTrigger>
           </TabsList>
 
           <TabsContent value='bdm' className='space-y-4'>
@@ -170,9 +193,17 @@ export function BDM() {
             </div>
           </TabsContent>
 
-
-
-
+          <TabsContent value='hr' className='space-y-4'>
+            <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
+              <UsersTable
+                data={hrUsers}
+                search={search}
+                navigate={navigate}
+                isLoading={isHrLoading}
+                loadingText='Loading HR'
+              />
+            </div>
+          </TabsContent>
         </Tabs>
       </Main>
 
