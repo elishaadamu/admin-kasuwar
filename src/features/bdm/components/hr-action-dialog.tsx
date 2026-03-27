@@ -24,7 +24,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/context/auth-context'
 import { useUsers } from './users-provider'
 
 const formSchema = z.object({
@@ -47,7 +46,6 @@ export function HRActionDialog({
   onOpenChange,
 }: HRActionDialogProps) {
   const { addUser } = useUsers()
-  const { user } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const form = useForm<HRForm>({
     resolver: zodResolver(formSchema),

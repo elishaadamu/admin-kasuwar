@@ -237,7 +237,11 @@ export function TeamMembers() {
         </Tabs>
       </Main>
 
-      <UsersDialogs />
+      <UsersDialogs onTeamCreated={() => {
+        if (selectedZone) {
+          fetchTeams(selectedZone)
+        }
+      }} />
     </UsersProvider>
   )
 }

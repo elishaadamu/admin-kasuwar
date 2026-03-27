@@ -4,9 +4,14 @@ import { UsersInviteDialog } from './users-invite-dialog'
 import { useUsers } from './users-provider'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { TeamLeadManagement } from './team-lead-management'
+import { CreateTeamManagement } from './create-team-management'
 import { ZoneLeaderManagement } from './zone-leader-management'
 
-export function UsersDialogs() {
+interface UsersDialogsProps {
+  onTeamCreated?: () => void
+}
+
+export function UsersDialogs({ onTeamCreated }: UsersDialogsProps) {
   const { open, setOpen, currentRow, setCurrentRow } = useUsers()
   return (
     <>
@@ -35,6 +40,25 @@ export function UsersDialogs() {
             </DialogDescription>
           </DialogHeader>
           <ZoneLeaderManagement onSuccess={() => setOpen(null)} />
+        </DialogContent>
+      </Dialog>
+      
+      {/* Create Team Dialog */}
+      <Dialog
+        open={open === 'create-team'}
+        onOpenChange={(val) => setOpen(val ? 'create-team' : null)}
+      >
+        <DialogContent className='sm:max-w-lg'>
+          <DialogHeader>
+            <DialogTitle>Create New Team</DialogTitle>
+            <DialogDescription>
+              Create a new team within a geopolitical zone.
+            </DialogDescription>
+          </DialogHeader>
+          <CreateTeamManagement onSuccess={() => {
+            setOpen(null)
+            if (onTeamCreated) onTeamCreated()
+          }} />
         </DialogContent>
       </Dialog>
 
