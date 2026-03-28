@@ -158,6 +158,7 @@ export const API_CONFIG = {
       GET_REGION_STATS: '/admin/regional/management/region/', // append {zoneId}/details
       GET_REGIONS_STATS: '/admin/regional/management/regions-stats', // general overview
       CREATE_TEAM: "/admin/regional/zones/", // append {zoneId}/teams
+      DELETE_TEAM: '/admin/regional/management/teams/', // append {teamId}
     },
     WALLET: {
       GET_ALL_REGIONAL: '/zone-wallet/regional/all',

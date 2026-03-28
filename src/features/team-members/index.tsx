@@ -19,6 +19,9 @@ import { TeamLeadManagement } from './components/team-lead-management'
 import { WalletManagement } from './components/wallet-management'
 import { RegionalStatistics } from './components/regional-statistics'
 import { type User } from './data/schema'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { Button } from '@/components/ui/button'
+import { Trash } from 'lucide-react'
 // import { Transactions } from '../transactions'
 
 const route = getRouteApi('/_authenticated/team-members/')
@@ -34,6 +37,7 @@ export function TeamMembers() {
   const [selectedTeam, setSelectedTeam] = useState<string>('')
   const [activeTab, setActiveTab] = useState('wallets')
   const [activeSubTab, setActiveSubTab] = useState('assign')
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const fetchUsers = async (teamId: string) => {
     setIsLoading(true)
@@ -96,6 +100,30 @@ export function TeamMembers() {
       fetchTeams(zoneId)
     }
   }
+
+  const handleDeleteTeam = async () => {
+    if (!selectedTeam) return
+    toast.promise(
+      axios.delete(apiUrl(API_CONFIG.ENDPOINTS.REGIONAL.DELETE_TEAM) + selectedTeam, {
+        withCredentials: true
+      }),
+      {
+        loading: 'Deleting team...',
+        success: () => {
+          setSelectedTeam('')
+          if (selectedZone) {
+            fetchTeams(selectedZone)
+          }
+          setIsDeleteDialogOpen(false)
+          return 'Team deleted successfully.'
+        },
+        error: (error: any) => {
+          return error.response?.data?.message || 'Failed to delete team.'
+        }
+      }
+    )
+  }
+
   return (
     <UsersProvider
       addUser={(newUser) => setUsers((prev) => [...prev, newUser])}
@@ -193,6 +221,18 @@ export function TeamMembers() {
                   </SelectContent>
                 </Select>
               </div>
+              
+              {selectedTeam && (
+                <div className='w-full sm:w-auto'>
+                  <Button 
+                    variant="destructive" 
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                  >
+                    <Trash className="w-4 h-4 mr-2" />
+                    Delete Team
+                  </Button>
+                </div>
+              )}
             </div>
             <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
               <UsersTable
@@ -242,6 +282,25 @@ export function TeamMembers() {
           fetchTeams(selectedZone)
         }
       }} />
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        handleConfirm={handleDeleteTeam}
+        title='Delete Team'
+        desc={
+          <div className="space-y-2">
+            <p>
+              Are you sure you want to delete this team? This action is permanent and cannot be undone.
+            </p>
+            <p className="text-destructive text-sm font-medium border border-destructive/20 bg-destructive/10 p-3 rounded-md mt-2">
+              Warning: The team members must be removed or reassigned somewhere and the team wallet needs to be empty because both the team and the wallet will be permanently deleted.
+            </p>
+          </div>
+        }
+        confirmText='Delete'
+        destructive
+      />
     </UsersProvider>
   )
 }

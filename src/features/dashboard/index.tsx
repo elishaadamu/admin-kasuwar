@@ -4,62 +4,87 @@ import axios from 'axios'
 import { Link } from '@tanstack/react-router'
 import { API_CONFIG, apiUrl } from '@/config/api'
 import { useAuth } from '@/context/auth-context'
-// Import useAuth
-// Import useAuth
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { DashboardStats } from './components/dashboard-stats'
 import { RecentSales } from './components/recent-sales'
 
+import {
+  Users,
+  Store,
+  Briefcase,
+  Network,
+  ShieldCheck,
+  Building,
+  ArrowRight,
+} from 'lucide-react'
+
 export function Dashboard() {
-  const { user, appState, isStateLoading } = useAuth() // Get user and appState from AuthContext
-  const [isLoading, setIsLoading] = useState(false)
+  const { user, appState, isStateLoading } = useAuth()
   const [users, setUsers] = useState([])
   const [agents, setAgents] = useState([])
   const [vendors, setVendors] = useState([])
   const [managers, setManagers] = useState([])
+  const [salesManagers, setSalesManagers] = useState([])
+  const [hrs, setHrs] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const ENDPOINTS = {
-    customers: user?.id
-      ? apiUrl(API_CONFIG.ENDPOINTS.CUSTOMERS.GET_ALL) + user.id
-      : '',
-    agents: user?.id
-      ? apiUrl(API_CONFIG.ENDPOINTS.AGENT.GET_ALL) + user.id
-      : '',
-    vendors: user?.id
-      ? apiUrl(API_CONFIG.ENDPOINTS.VENDORS.GET_ALL) + user.id
-      : '',
-    managers: user?.id
-      ? apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.GET_ALL) + user.id
-      : '',
+    customers: user?.id ? apiUrl(API_CONFIG.ENDPOINTS.CUSTOMERS.GET_ALL) + user.id : '',
+    agents: user?.id ? apiUrl(API_CONFIG.ENDPOINTS.AGENT.GET_ALL) + user.id : '',
+    vendors: user?.id ? apiUrl(API_CONFIG.ENDPOINTS.VENDORS.GET_ALL) + user.id : '',
+    managers: user?.id ? apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.GET_ALL) + user.id : '',
+    salesManagers: user?.id ? apiUrl(API_CONFIG.ENDPOINTS.SALES_MANAGER.GET_ALL) + user.id : '',
+    hrs: apiUrl(API_CONFIG.ENDPOINTS.HR.GET_ALL),
   }
 
   const fetchUsers = async () => {
     if (!user?.id) return
     setIsLoading(true)
     try {
-      const responseCustomers = await axios.get(ENDPOINTS.customers)
-
-      setUsers(responseCustomers.data?.users || [])
-      const responseVendors = await axios.get(ENDPOINTS.vendors)
-      setVendors(responseVendors.data?.vendors || [])
-      const responseAgents = await axios.get(ENDPOINTS.agents)
-      setAgents(responseAgents.data || [])
-      console.log(responseAgents.data)
-      const responseManagers = await axios.get(ENDPOINTS.managers)
-      setManagers(responseManagers.data?.managers || [])
+      const [
+        customersRes,
+        vendorsRes,
+        agentsRes,
+        managersRes,
+        salesManagersRes,
+        hrsRes
+      ] = await Promise.allSettled([
+        axios.get(ENDPOINTS.customers),
+        axios.get(ENDPOINTS.vendors),
+        axios.get(ENDPOINTS.agents),
+        axios.get(ENDPOINTS.managers),
+        axios.get(ENDPOINTS.salesManagers),
+        axios.get(ENDPOINTS.hrs),
+      ])
+      
+      if (customersRes.status === 'fulfilled') setUsers(customersRes.value.data?.users || [])
+      if (vendorsRes.status === 'fulfilled') setVendors(vendorsRes.value.data?.vendors || [])
+      if (agentsRes.status === 'fulfilled') setAgents(agentsRes.value.data || [])
+      if (managersRes.status === 'fulfilled') setManagers(managersRes.value.data?.managers || [])
+      if (salesManagersRes.status === 'fulfilled') {
+        const sData = salesManagersRes.value.data
+        const smArray = sData?.salesManagers || sData?.managers || sData
+        setSalesManagers(Array.isArray(smArray) ? smArray : [])
+      }
+      
+      if (hrsRes.status === 'fulfilled') {
+        const hData = hrsRes.value.data
+        const hrArray = hData?.hrs || hData?.hr || hData?.hrRecords || hData
+        setHrs(Array.isArray(hrArray) ? hrArray : [])
+      }
     } catch (error) {
-      console.error('Failed to fetch Vendors:', error)
+      console.error('Failed to fetch:', error)
     } finally {
       setIsLoading(false)
     }
@@ -71,226 +96,110 @@ export function Dashboard() {
 
   return (
     <>
-      {/* ===== Top Heading ===== */}
       <Header>
         <div className='ms-auto flex items-center space-x-4'>
           <Search />
           <ThemeSwitch />
           <ConfigDrawer />
+          <ProfileDropdown />
         </div>
       </Header>
 
-      {/* ===== Main ===== */}
       <Main>
         <div className='mb-2 flex items-center justify-between space-y-2'>
-          <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
+          <div>
+            <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
+            <p className='text-muted-foreground text-sm'>
+              Welcome back{user?.firstName ? `, ${user.firstName}` : ''}! Here's your platform overview.
+            </p>
+          </div>
         </div>
-        <Tabs
-          orientation='vertical'
-          defaultValue='overview'
-          className='space-y-4'
-        >
-          <TabsContent value='overview' className='space-y-4'>
-            <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Total Users
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='text-muted-foreground h-4 w-4'
-                  >
-                    <path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' />
-                    <circle cx='9' cy='7' r='4' />
-                    <path d='M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>
-                    {isStateLoading ? '...' : (appState?.totals.user ?? 0)}
-                  </div>
-                  <p className='text-muted-foreground text-xs'>
-                    Total registered users
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Total Vendors
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='text-muted-foreground h-4 w-4'
-                  >
-                    <path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' />
-                    <circle cx='9' cy='7' r='4' />
-                    <path d='M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>
-                    {isStateLoading ? '...' : (appState?.totals.vendor ?? 0)}
-                  </div>
-                  <p className='text-muted-foreground text-xs'>
-                    Total registered vendors
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Total Agents
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='text-muted-foreground h-4 w-4'
-                  >
-                    <rect width='20' height='14' x='2' y='5' rx='2' />
-                    <path d='M2 10h20' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>
-                    {isStateLoading ? '...' : (appState?.totals.agent ?? 0)}
-                  </div>
-                  <p className='text-muted-foreground text-xs'>
-                    Total registered agents
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Total Admins
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='text-muted-foreground h-4 w-4'
-                  >
-                    <path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' />
-                    <circle cx='9' cy='7' r='4' />
-                    <path d='M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>
-                    {isStateLoading ? '...' : (appState?.totals.admin ?? 0)}
-                  </div>
-                  <p className='text-muted-foreground text-xs'>
-                    Total registered admins
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2'>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between'>
-                  <CardTitle>Recent Users</CardTitle>
-                  <Link
-                    to='/customers'
-                    className='text-[16px] font-medium text-gray-500 hover:underline'
-                  >
-                    See more
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales data={users.slice(0, 5)} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between'>
-                  <CardTitle>Recent Agents</CardTitle>
-                  <Link
-                    to='/agents'
-                    className='text-[16px] font-medium text-gray-500 hover:underline'
-                  >
-                    See more
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales data={agents.slice(0, 5)} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between'>
-                  <CardTitle>Recent Vendors</CardTitle>
-                  <Link
-                    to='/vendors'
-                    className='text-[16px] font-medium text-gray-500 hover:underline'
-                  >
-                    See more
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales data={vendors?.slice(0, 5)} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between'>
-                  <CardTitle>Business Development Managers</CardTitle>
-                  <Link
-                    to='/bdm'
-                    className='text-[16px] font-medium text-gray-500 hover:underline'
-                  >
-                    See more
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales
-                    data={managers
-                      ?.filter((item) => item.role === 'bdm')
-                      .slice(0, 5)}
-                  />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between'>
-                  <CardTitle>Business Developers</CardTitle>
-                  <Link
-                    to='/bdm'
-                    className='text-[16px] font-medium text-gray-500 hover:underline'
-                  >
-                    See more
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales
-                    data={managers
-                      ?.filter((item) => item.role === 'bd')
-                      .slice(0, 5)}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+
+        {/* ═══ Dashboard Stats ═══ */}
+        <DashboardStats />
+
+        {/* ═══ Recent Activity Cards ═══ */}
+        <div className='mt-12 mb-6'>
+          <h2 className='text-xl font-bold tracking-tight mb-1'>Recent Registrations & Activity</h2>
+          <p className='text-muted-foreground text-sm'>A quick view of the newest members grouped by roles.</p>
+        </div>
+        
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3 pb-8'>
+          
+          <RecentActivityCard 
+            title="Recent Customers" 
+            link="/customers" 
+            data={users.slice(0, 5)} 
+            icon={<Users className="h-5 w-5 text-blue-500" />} 
+          />
+
+          <RecentActivityCard 
+            title="Recent Agents" 
+            link="/agents" 
+            data={agents.slice(0, 5)} 
+            icon={<Network className="h-5 w-5 text-indigo-500" />} 
+          />
+
+          <RecentActivityCard 
+            title="Recent Vendors" 
+            link="/vendors" 
+            data={vendors?.slice(0, 5)} 
+            icon={<Store className="h-5 w-5 text-orange-500" />} 
+          />
+
+          <RecentActivityCard 
+            title="Business Dev. Managers" 
+            link="/bdm" 
+            data={managers?.filter((item) => item.role === 'bdm').slice(0, 5)} 
+            icon={<Building className="h-5 w-5 text-purple-500" />} 
+          />
+
+          <RecentActivityCard 
+            title="Business Developers" 
+            link="/bdm" 
+            data={managers?.filter((item) => item.role === 'bd').slice(0, 5)} 
+            icon={<Briefcase className="h-5 w-5 text-teal-500" />} 
+          />
+
+          <RecentActivityCard 
+            title="Sales Managers" 
+            link="/bdm" // Update if there's a specific route for sales managers
+            data={salesManagers?.slice(0, 5)} 
+            icon={<ShieldCheck className="h-5 w-5 text-emerald-500" />} 
+          />
+
+          <RecentActivityCard 
+            title="Human Resources (HR)" 
+            link="/bdm" // Update if there's a specific route for HR
+            data={hrs?.slice(0, 5)} 
+            icon={<Users className="h-5 w-5 text-rose-500" />} 
+          />
+
+        </div>
       </Main>
     </>
   )
 }
+
+function RecentActivityCard({ title, link, data, icon }) {
+  return (
+    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between pb-2 pt-5">
+        <div className="flex items-center gap-2">
+          {icon}
+          <CardTitle className="text-base font-semibold">{title}</CardTitle>
+        </div>
+        <Link
+          to={link}
+          className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center"
+        >
+          View all <ArrowRight className="ml-1 h-3 w-3" />
+        </Link>
+      </CardHeader>
+      <CardContent className="pt-4 pb-5 flex-1">
+        <RecentSales data={data || []} />
+      </CardContent>
+    </Card>
+  )
+}
+

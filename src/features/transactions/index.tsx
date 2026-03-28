@@ -87,7 +87,7 @@ export function Transactions() {
              {isStatsLoading ? (
               <Loader2 className='h-4 w-4 animate-spin' />
             ) : (
-              <div className='text-2xl font-bold text-green-600'>{stats?.successful || 0}</div>
+              <div className='text-2xl font-bold text-green-600'>₦{stats?.successful || 0}</div>
             )}
           </CardContent>
         </Card>
@@ -99,7 +99,7 @@ export function Transactions() {
              {isStatsLoading ? (
               <Loader2 className='h-4 w-4 animate-spin' />
             ) : (
-              <div className='text-2xl font-bold text-yellow-600'>{stats?.pending || 0}</div>
+              <div className='text-2xl font-bold text-yellow-600'>₦{stats?.pending || 0}</div>
             )}
           </CardContent>
         </Card>

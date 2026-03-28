@@ -1,15 +1,19 @@
 import {
   ArrowLeftRight,
-  ClipboardList,
-  History,
   LayoutDashboard,
   Package,
   Settings,
-  UserCog,  
-  ImageIcon,
-  Coins,
+  Users,
+  Store,
+  Truck,
+  UsersRound,
+  Tags,
+  Image as ImageIcon2,
+  Gift,
+  TicketPercent,
+  MapPin,
+  CreditCard
 } from 'lucide-react'
-import { UserPlus } from 'lucide-react'
 import logo from '@/assets/logo.png'
 import { type SidebarData } from '../types'
 
@@ -36,16 +40,36 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
-          title: 'Category',
-          icon: History,
-          items: [{ title: 'All Categories', url: '/category' }],
+          title: 'Banners',
+          icon: ImageIcon2,
+          url: '/banners',
         },
         {
-          title: 'Product Management',
-          icon: History,
+          title: 'Bonus & Rewards',
+          icon: Gift,
+          url: '/bonus',
+        },
+        {
+          title: 'Categories',
+          icon: Tags,
+          url: '/category',
+        },
+        {
+          title: 'Coupons',
+          icon: TicketPercent,
+          url: '/coupons',
+        },
+        {
+          title: 'Customers',
+          icon: Users,
+          url: '/customers',
+        },
+        {
+          title: 'Delivery Management',
+          icon: Truck,
           items: [
-            { title: 'All Products', url: '/products' },
-            { title: 'All Vendor Products', url: '/vendor-products' },
+            { title: 'Delivery Men', url: '/delivery-management' },
+            { title: 'Delivery Requests', url: '/delivery-requests' },
           ],
         },
         {
@@ -56,112 +80,56 @@ export const sidebarData: SidebarData = {
             { title: 'POS Orders', url: '/pos' },
           ],
         },
-
-        // {
-        //   title: 'Help & Support',
-        //   icon: Ticket,
-        //   items: [
-        //     { title: 'Inbox', url: '/support/inbox' },
-        //     { title: 'Tickets', url: '/support/tickets' },
-        //   ],
-        // },
         {
-          title: 'Customer Management',
-          icon: UserPlus,
-          items: [{ title: ' Customers', url: '/customers' }],
-        },
-        {
-          title: 'Seller Management',
-          icon: UserCog,
-          items: [{ title: 'Manage Sellers', url: '/vendors' }],
-        },
-        {
-          title: 'Delivery Management',
-          icon: UserCog,
+          title: 'Product Management',
+          icon: Package, // Consider a different icon if preferred
           items: [
-            { title: ' Delivery Men', url: '/delivery-management' },
-            { title: 'Delivery Requests', url: '/delivery-requests' },
+            { title: 'All Products', url: '/products' },
+            { title: 'Vendor Products', url: '/vendor-products' },
           ],
         },
-        // {
-        //   title: 'Task Management',
-        //   icon: ListTodo,
-        //   items: [
-        //     { title: 'Assign Task', url: '/tasks/assign' },
-        //     { title: 'View Reports', url: '/tasks/reports' },
-        //   ],
-        // },
-
         {
-          title: 'Team management',
-          icon: UserCog,
+          title: 'Sellers / Vendors',
+          icon: Store,
+          url: '/vendors',
+        },
+        {
+          title: 'Shipping Methods',
+          icon: MapPin,
+          url: '/settings/shipping-methods',
+        },
+        {
+          title: 'Subscriptions',
+          icon: CreditCard,
+          url: '/settings/subscription',
+        },
+        {
+          title: 'Team Management',
+          icon: UsersRound,
           items: [
-            {
-              title: 'Manage Agents',
-              url: '/agents',
-            },
-            { title: 'Manage Developers/SM', url: '/bdm' },
-            { title: 'Manage Regional/Team Leads', url: '/team-members' },
+            { title: 'Agents', url: '/agents' },
+            { title: 'Developers / SM', url: '/bdm' },
+            { title: 'Regional / Team Leads', url: '/team-members' },
             { title: 'Transactions', url: '/transactions' },
           ],
         },
-        // {
-        //   title: 'Reports & Performance',
-        //   icon: FileText,
-        //   items: [
-        //     { title: 'BDMs Report', url: '/reports/bdms' },
-        //     { title: 'BDs Report', url: '/reports/bds' },
-        //   ],
-        // },
         {
-          title: 'Transfers & Withdrawal',
+          title: 'Transfers & Withdrawals',
           icon: ArrowLeftRight,
           items: [
             { title: 'Fund/Debit Wallet', url: '/fund-debit' },
-         
-            // { title: 'History', url: '/transaction-history' },
-            {
-              title: 'Withdrawal Requests',
-              url: '/withdrawal-requests',
-            },
+            { title: 'Withdrawal Requests', url: '/withdrawal-requests' },
           ],
         },
-
-        {
-          title: 'Coupons',
-          icon: ClipboardList,
-          url: '/coupons',
-        },
-
-        {
-          title: 'Banners',
-          icon: ImageIcon,
-          url: '/banners',
-        },
-        {
-          title: "Bonus and Rewards",
-          icon: Coins,
-          url: "/bonus"
-        }
       ],
     },
     {
       title: 'Settings',
       items: [
-        // {
-        //   title: 'Auth',
-        //   icon: ShieldCheck,
-        //   items: [{ title: 'Sign In', url: '/sign-in' }],
-        // },
         {
-          title: 'Settings',
+          title: 'Account Settings',
           icon: Settings,
-          items: [
-            { title: 'Account Profile', url: '/settings/account' },
-
-            { title: 'Shipping methods', url: '/settings/shipping-methods' },
-            { title: 'Subscription', url: '/settings/subscription' },
-          ],
+          url: '/settings/account',
         },
       ],
     },
