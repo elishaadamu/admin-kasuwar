@@ -274,8 +274,3 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
     </Card>
   )
 }
-
-
-
-
-

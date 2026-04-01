@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { UsersActionDialog } from './users-action-dialog'
-import { UsersDeleteDialog } from './users-delete-dialog'
+
 import { UsersInviteDialog } from './users-invite-dialog'
 import { useUsers } from './users-provider'
 
@@ -34,17 +34,7 @@ export function UsersDialogs() {
             currentRow={currentRow}
           />
 
-          <UsersDeleteDialog
-            key={`user-delete-${currentRow.id}`}
-            open={open === 'delete'}
-            onOpenChange={() => {
-              setOpen('delete')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
-            currentRow={currentRow}
-          />
+
         </>
       )}
     </>

@@ -46,9 +46,7 @@ export function TransactionDetailsDialog({
     }
   }, [open, transactionId])
 
-  const walletBalance = typeof transaction?.walletId === 'object' 
-    ? transaction.walletId.balance 
-    : null
+  const walletBalance = transaction?.walletId?.balance ?? null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

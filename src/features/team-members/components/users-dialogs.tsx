@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { TeamLeadManagement } from './team-lead-management'
 import { CreateTeamManagement } from './create-team-management'
 import { ZoneLeaderManagement } from './zone-leader-management'
+import { RegisterStaffDialog } from './register-staff-dialog'
 
 interface UsersDialogsProps {
   onTeamCreated?: () => void
@@ -61,6 +62,11 @@ export function UsersDialogs({ onTeamCreated }: UsersDialogsProps) {
           }} />
         </DialogContent>
       </Dialog>
+      
+      <RegisterStaffDialog
+        open={open === 'register-staff'}
+        onOpenChange={(val) => setOpen(val ? 'register-staff' : null)}
+      />
 
       {currentRow && (
         <>

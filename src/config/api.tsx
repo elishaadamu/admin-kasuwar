@@ -50,6 +50,7 @@ export const API_CONFIG = {
     VENDORS: {
       GET_ALL: '/admin/vendors/',
       GET_SINGLE: '/admin/vendors/',
+      GET_DETAILS: '/admin/vendors/',
       SUSPEND: '/admin/suspend-vendor/',
       UNSUSPEND: '/admin/unsuspend-vendor/',
       DELETE: '/admin/delete-vendor/',
@@ -173,6 +174,7 @@ export const API_CONFIG = {
     HR: {
       CREATE: '/hr/create-hr',
       GET_ALL: '/hr/all-hr',
+      REGISTER_STAFF: '/hr/register-staff',
       SUSPEND: '/hr/suspend-hr/',
       UNSUSPEND: '/hr/unsuspend-hr/',
       DELETE: '/hr/delete-hr/',

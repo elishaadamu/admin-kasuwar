@@ -3,7 +3,7 @@ import axios from 'axios'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
 import { API_CONFIG, apiUrl } from '@/config/api'
-import { UserCheck, UserX, Trash2 } from 'lucide-react'
+import { UserCheck, UserX, Trash2, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/context/auth-context'
 import { Button } from '@/components/ui/button'
@@ -69,6 +69,17 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(user)
+            setOpen('view')
+          }}
+        >
+          View Details
+          <DropdownMenuShortcut>
+            <Eye size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() =>
             handleStatusChange(user.suspended ? 'active' : 'suspended')
