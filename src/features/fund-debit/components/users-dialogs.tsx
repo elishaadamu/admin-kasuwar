@@ -8,6 +8,8 @@ import { UsersInviteDialog } from './users-invite-dialog'
 import { useUsers } from './users-provider'
 import { UsersSetPriceDialog } from './users-set-price-dialog'
 import { UsersViewDialog } from './users-view-dialog'
+import { UsersFundDialog } from './users-fund-dialog'
+import { UsersDebitDialog } from './users-debit-dialog'
 
 export function UsersDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useUsers()
@@ -105,6 +107,30 @@ export function UsersDialogs() {
                 setCurrentRow(null)
               }, 500)
             }}
+          />
+
+          <UsersFundDialog
+            key={`user-fund-${currentRow._id}`}
+            open={open === 'fund'}
+            onOpenChange={() => {
+              setOpen('fund')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            currentRow={currentRow}
+          />
+
+          <UsersDebitDialog
+            key={`user-debit-${currentRow._id}`}
+            open={open === 'debit'}
+            onOpenChange={() => {
+              setOpen('debit')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            currentRow={currentRow}
           />
         </>
       )}

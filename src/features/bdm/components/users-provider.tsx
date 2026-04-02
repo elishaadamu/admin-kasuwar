@@ -9,6 +9,8 @@ type UsersContextType = {
   setOpen: (str: UsersDialogType | null) => void
   currentRow: User | null
   setCurrentRow: React.Dispatch<React.SetStateAction<User | null>>
+  activeTab: string
+  setActiveTab: (tab: string) => void
   /**
    * updateUser should update an existing user in the list (partial update)
    * Provided by the parent (BD) so it can update the users state there.
@@ -25,11 +27,15 @@ export function UsersProvider({
   addUser,
   removeUser,
   updateUser,
+  activeTab,
+  setActiveTab,
 }: {
   children: React.ReactNode
   addUser?: (user: User) => void
   removeUser?: (id: string) => void
   updateUser?: (id: string, changes: Partial<User>) => void
+  activeTab: string
+  setActiveTab: (tab: string) => void
 }) {
   const [open, setOpen] = useDialogState<UsersDialogType>(null)
   const [currentRow, setCurrentRow] = useState<User | null>(null)
@@ -39,19 +45,21 @@ export function UsersProvider({
   const ctxRemoveUser = removeUser ?? (() => {})
 
   return (
-    <UsersContext
+    <UsersContext.Provider
       value={{
         open,
         setOpen,
         currentRow,
         setCurrentRow,
+        activeTab,
+        setActiveTab,
         updateUser: ctxUpdateUser,
         addUser: ctxAddUser,
         removeUser: ctxRemoveUser,
       }}
     >
       {children}
-    </UsersContext>
+    </UsersContext.Provider>
   )
 }
 

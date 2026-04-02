@@ -28,6 +28,11 @@ export const transactionSchema = z.object({
     phone: z.string().optional(),
     businessName: z.string().optional(),
     role: z.string().optional(),
+    virtualAccount: z.object({
+      bankName: z.string().optional(),
+      accountNumber: z.string().optional(),
+      name: z.string().optional(),
+    }).optional(),
   }).optional(),
 })
 

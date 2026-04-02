@@ -8,6 +8,7 @@ import { LongText } from '@/components/long-text'
 import { callTypes, roles } from '../data/data'
 import { type User } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { DataTableViewOptions } from '@/components/data-table/view-options'
 
 export const usersColumns: ColumnDef<User>[] = [
   {
@@ -68,18 +69,47 @@ export const usersColumns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: 'assignedAt',
+    accessorKey: 'phone',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Assigned At' />
+      <DataTableColumnHeader column={column} title='Phone' />
+    ),
+    cell: ({ row }) => (
+      <div className='w-fit text-nowrap'>{row.getValue('phone')}</div>
+    ),
+  },
+  {
+    accessorKey: 'role',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Role' />
     ),
     cell: ({ row }) => {
-      const date = row.getValue('assignedAt') as Date
-      if (!date) return <div className='text-muted-foreground'>-</div>
-      return <div>{new Date(date).toLocaleDateString()}</div>
+      const role = row.getValue('role') as string
+      return (
+        <Badge variant='outline' className='capitalize'>
+          {role || '-'}
+        </Badge>
+      )
+    },
+  },
+  {
+    accessorKey: 'walletBalance',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Wallet Balance' />
+    ),
+    cell: ({ row }) => {
+      const balance = row.getValue('walletBalance') as number
+      return (
+        <div className='font-medium'>
+          ₦{balance?.toLocaleString() || '0'}
+        </div>
+      )
     },
   },
   {
     id: 'actions',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Action' />
+    ),
     cell: DataTableRowActions,
   },
 ]

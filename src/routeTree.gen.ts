@@ -35,11 +35,13 @@ import { Route as AuthenticatedTransactionsIndexRouteImport } from './routes/_au
 import { Route as AuthenticatedTransactionHistoryIndexRouteImport } from './routes/_authenticated/transaction-history/index'
 import { Route as AuthenticatedTeamMembersIndexRouteImport } from './routes/_authenticated/team-members/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedSmIndexRouteImport } from './routes/_authenticated/sm/index'
 import { Route as AuthenticatedSettlementIndexRouteImport } from './routes/_authenticated/settlement/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedPosIndexRouteImport } from './routes/_authenticated/pos/index'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
+import { Route as AuthenticatedHrIndexRouteImport } from './routes/_authenticated/hr/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedFundDebitIndexRouteImport } from './routes/_authenticated/fund-debit/index'
 import { Route as AuthenticatedDeliveryRequestsIndexRouteImport } from './routes/_authenticated/delivery-requests/index'
@@ -200,6 +202,11 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSmIndexRoute = AuthenticatedSmIndexRouteImport.update({
+  id: '/sm/',
+  path: '/sm/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettlementIndexRoute =
   AuthenticatedSettlementIndexRouteImport.update({
     id: '/settlement/',
@@ -229,6 +236,11 @@ const AuthenticatedOrdersIndexRoute =
     path: '/orders/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedHrIndexRoute = AuthenticatedHrIndexRouteImport.update({
+  id: '/hr/',
+  path: '/hr/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHelpCenterIndexRoute =
   AuthenticatedHelpCenterIndexRouteImport.update({
     id: '/help-center/',
@@ -408,11 +420,13 @@ export interface FileRoutesByFullPath {
   '/delivery-requests': typeof AuthenticatedDeliveryRequestsIndexRoute
   '/fund-debit': typeof AuthenticatedFundDebitIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/hr': typeof AuthenticatedHrIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/pos': typeof AuthenticatedPosIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/settlement': typeof AuthenticatedSettlementIndexRoute
+  '/sm': typeof AuthenticatedSmIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/team-members': typeof AuthenticatedTeamMembersIndexRoute
   '/transaction-history': typeof AuthenticatedTransactionHistoryIndexRoute
@@ -461,11 +475,13 @@ export interface FileRoutesByTo {
   '/delivery-requests': typeof AuthenticatedDeliveryRequestsIndexRoute
   '/fund-debit': typeof AuthenticatedFundDebitIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/hr': typeof AuthenticatedHrIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/pos': typeof AuthenticatedPosIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/settlement': typeof AuthenticatedSettlementIndexRoute
+  '/sm': typeof AuthenticatedSmIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/team-members': typeof AuthenticatedTeamMembersIndexRoute
   '/transaction-history': typeof AuthenticatedTransactionHistoryIndexRoute
@@ -519,11 +535,13 @@ export interface FileRoutesById {
   '/_authenticated/delivery-requests/': typeof AuthenticatedDeliveryRequestsIndexRoute
   '/_authenticated/fund-debit/': typeof AuthenticatedFundDebitIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/_authenticated/hr/': typeof AuthenticatedHrIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/pos/': typeof AuthenticatedPosIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/settlement/': typeof AuthenticatedSettlementIndexRoute
+  '/_authenticated/sm/': typeof AuthenticatedSmIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/team-members/': typeof AuthenticatedTeamMembersIndexRoute
   '/_authenticated/transaction-history/': typeof AuthenticatedTransactionHistoryIndexRoute
@@ -576,11 +594,13 @@ export interface FileRouteTypes {
     | '/delivery-requests'
     | '/fund-debit'
     | '/help-center'
+    | '/hr'
     | '/orders'
     | '/pos'
     | '/products'
     | '/settings/'
     | '/settlement'
+    | '/sm'
     | '/tasks'
     | '/team-members'
     | '/transaction-history'
@@ -629,11 +649,13 @@ export interface FileRouteTypes {
     | '/delivery-requests'
     | '/fund-debit'
     | '/help-center'
+    | '/hr'
     | '/orders'
     | '/pos'
     | '/products'
     | '/settings'
     | '/settlement'
+    | '/sm'
     | '/tasks'
     | '/team-members'
     | '/transaction-history'
@@ -686,11 +708,13 @@ export interface FileRouteTypes {
     | '/_authenticated/delivery-requests/'
     | '/_authenticated/fund-debit/'
     | '/_authenticated/help-center/'
+    | '/_authenticated/hr/'
     | '/_authenticated/orders/'
     | '/_authenticated/pos/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
     | '/_authenticated/settlement/'
+    | '/_authenticated/sm/'
     | '/_authenticated/tasks/'
     | '/_authenticated/team-members/'
     | '/_authenticated/transaction-history/'
@@ -902,6 +926,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sm/': {
+      id: '/_authenticated/sm/'
+      path: '/sm'
+      fullPath: '/sm'
+      preLoaderRoute: typeof AuthenticatedSmIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settlement/': {
       id: '/_authenticated/settlement/'
       path: '/settlement'
@@ -935,6 +966,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof AuthenticatedOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/': {
+      id: '/_authenticated/hr/'
+      path: '/hr'
+      fullPath: '/hr'
+      preLoaderRoute: typeof AuthenticatedHrIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/help-center/': {
@@ -1155,10 +1193,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDeliveryRequestsIndexRoute: typeof AuthenticatedDeliveryRequestsIndexRoute
   AuthenticatedFundDebitIndexRoute: typeof AuthenticatedFundDebitIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedHrIndexRoute: typeof AuthenticatedHrIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
   AuthenticatedPosIndexRoute: typeof AuthenticatedPosIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedSettlementIndexRoute: typeof AuthenticatedSettlementIndexRoute
+  AuthenticatedSmIndexRoute: typeof AuthenticatedSmIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTeamMembersIndexRoute: typeof AuthenticatedTeamMembersIndexRoute
   AuthenticatedTransactionHistoryIndexRoute: typeof AuthenticatedTransactionHistoryIndexRoute
@@ -1191,10 +1231,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedDeliveryRequestsIndexRoute,
   AuthenticatedFundDebitIndexRoute: AuthenticatedFundDebitIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedHrIndexRoute: AuthenticatedHrIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
   AuthenticatedPosIndexRoute: AuthenticatedPosIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedSettlementIndexRoute: AuthenticatedSettlementIndexRoute,
+  AuthenticatedSmIndexRoute: AuthenticatedSmIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedTeamMembersIndexRoute: AuthenticatedTeamMembersIndexRoute,
   AuthenticatedTransactionHistoryIndexRoute:

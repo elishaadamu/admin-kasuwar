@@ -17,26 +17,21 @@ import {
   Table,
   TableBody,
   TableCell,
-  // Removed unused import
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles } from '../data/data'
-import { DeliveryRequest } from '../types'
+import { type FundDebitUser } from '../types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 
-declare module '@tanstack/react-table' {
-  // ... (existing module declaration)
-}
-
 type DataTableProps = {
-  data: DeliveryRequest[]
+  data: FundDebitUser[]
   search: Record<string, unknown>
   navigate: NavigateFn
   isLoading: boolean
+  loadingText?: string
 }
 
 export function UsersTable({
@@ -44,17 +39,14 @@ export function UsersTable({
   search,
   navigate,
   isLoading,
+  loadingText = 'Loading users...',
 }: DataTableProps) {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
 
-  // Local state management for table (uncomment to use local-only state, not synced with URL)
-  // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
-  // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
-
-  // Synced with URL states (keys/defaults mirror users route search schema)
+  // Synced with URL states
   const {
     columnFilters,
     onColumnFiltersChange,
@@ -67,8 +59,7 @@ export function UsersTable({
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      // username per-column text filter
-      { columnId: 'fullName', searchKey: 'name', type: 'string' },
+      { columnId: 'name', searchKey: 'name', type: 'string' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
       { columnId: 'role', searchKey: 'role', type: 'array' },
     ],
@@ -113,16 +104,22 @@ export function UsersTable({
             columnId: 'status',
             title: 'Status',
             options: [
+              { label: 'Active', value: 'active' },
+              { label: 'Inactive', value: 'inactive' },
+              { label: 'Suspended', value: 'suspended' },
               { label: 'Pending', value: 'pending' },
-              { label: 'Assigned', value: 'assigned' },
-              { label: 'Completed', value: 'completed' },
             ],
           },
-
           {
             columnId: 'role',
             title: 'Role',
-            options: roles.map((role) => ({ ...role })),
+            options: [
+              { label: 'BDM', value: 'bdm' },
+              { label: 'Sales Manager', value: 'sales-manager' },
+              { label: 'BD', value: 'bd' },
+              { label: 'Agent', value: 'agent' },
+              { label: 'Delivery Man', value: 'delivery-man' },
+            ],
           },
         ]}
       />
@@ -183,7 +180,7 @@ export function UsersTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  {isLoading ? 'Loading Delivery Requests...' : 'No results.'}
+                  {isLoading ? loadingText : 'No results.'}
                 </TableCell>
               </TableRow>
             )}

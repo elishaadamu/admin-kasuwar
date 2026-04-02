@@ -1,7 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { CheckCircle2, XCircle, Eye, UserPlus, DollarSign } from 'lucide-react'
-import { useAuth } from '@/context/auth-context'
+import { Wallet, MinusCircle, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -10,21 +9,16 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type DeliveryRequest } from '../types'
+import { type FundDebitUser } from '../types'
 import { useUsers } from './users-provider'
 
 type DataTableRowActionsProps = {
-  row: Row<DeliveryRequest>
+  row: Row<FundDebitUser>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { user: authUser } = useAuth()
-  const deliveryRequest = row.original
+  const user = row.original
   const { setOpen, setCurrentRow } = useUsers()
-
-  if (!authUser) {
-    return null // Or handle the case where authUser is not available
-  }
 
   return (
     <DropdownMenu modal={false}>
@@ -40,7 +34,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       <DropdownMenuContent align='end' className='w-[160px]'>
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(deliveryRequest)
+            setCurrentRow(user)
             setOpen('view')
           }}
         >
@@ -50,55 +44,29 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </DropdownMenuShortcut>
         </DropdownMenuItem>
 
-        <>
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(deliveryRequest)
-              setOpen('approve')
-            }}
-          >
-            Approve Request
-            <DropdownMenuShortcut>
-              <CheckCircle2 size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(user)
+            setOpen('fund')
+          }}
+        >
+          Fund Wallet
+          <DropdownMenuShortcut>
+            <Wallet size={16} className='text-green-600' />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(deliveryRequest)
-              setOpen('cancel')
-            }}
-          >
-            Cancel Request
-            <DropdownMenuShortcut>
-              <XCircle size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(deliveryRequest)
-              setOpen('assign')
-            }}
-          >
-            Assign Delivery
-            <DropdownMenuShortcut>
-              <UserPlus size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(deliveryRequest)
-              setOpen('set-price')
-            }}
-          >
-            Set Price
-            <DropdownMenuShortcut>
-              <DollarSign size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </>
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(user)
+            setOpen('debit')
+          }}
+        >
+          Debit Wallet
+          <DropdownMenuShortcut>
+            <MinusCircle size={16} className='text-destructive' />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

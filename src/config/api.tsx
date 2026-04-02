@@ -134,6 +134,7 @@ export const API_CONFIG = {
     },
     SALES_MANAGER: {
       GET_ALL: '/admin/sm/', // append {adminId}
+      CREATE: '/admin/sm/', // append {adminId}
       GET_SINGLE: '/admin/detailed-sm/', // append {adminUserId}/{managerId}
       SUSPEND: '/admin/suspend-sales-manager/', // append {adminUserId}/{managerId}
       UNSUSPEND: '/admin/unsuspend-sales-manager/', // append {adminUserId}/{managerId}

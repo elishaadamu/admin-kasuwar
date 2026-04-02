@@ -1,7 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type DeliveryRequest as WithdrawalRequest } from '../types'
@@ -9,39 +7,12 @@ import { DataTableRowActions } from './data-table-row-actions'
 
 export const usersColumns: ColumnDef<WithdrawalRequest>[] = [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-        className='translate-y-[2px]'
-      />
-    ),
-    meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
-    },
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-        className='translate-y-[2px]'
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: 'transactionId',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Transaction ID' />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-36'>{row.getValue('transactionId')}</LongText>
+      <LongText className='max-w-36'>{row.getValue('transactionId') || row.original._id}</LongText>
     ),
     meta: { className: 'w-36' },
   },
@@ -62,49 +33,23 @@ export const usersColumns: ColumnDef<WithdrawalRequest>[] = [
         currency: 'NGN',
       }).format(amount)
 
-      return <div className='font-medium whitespace-nowrap'>{formatted}</div>
+      return <div className='font-bold whitespace-nowrap'>{formatted}</div>
     },
   },
   {
-    accessorKey: 'chargeAmount',
+    id: 'userName',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Charge' />
+      <DataTableColumnHeader column={column} title='User Name' />
     ),
     cell: ({ row }) => {
-      const rawAmount = row.getValue('chargeAmount')
-      if (rawAmount === null || rawAmount === undefined) {
-        return <div className='font-medium whitespace-nowrap'>no charges</div>
-      }
-
-      const amount = parseFloat(rawAmount as string)
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'NGN',
-      }).format(amount)
-
-      return <div className='font-medium whitespace-nowrap'>{formatted}</div>
-    },
-  },
-  {
-    accessorKey: 'netAmount',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Net Amount' />
-    ),
-    cell: ({ row }) => {
-      const netAmount = row.getValue('netAmount')
-      if (netAmount === null || netAmount === undefined) {
-        return (
-          <div className='font-medium whitespace-nowrap'>no net amount</div>
-        )
-      }
-
-      const amount = parseFloat(netAmount as string)
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'NGN',
-      }).format(amount)
-
-      return <div className='font-medium whitespace-nowrap'>{formatted}</div>
+      const details = row.original.userDetails || row.original.user
+      if (!details) return <div className='text-muted-foreground'>N/A</div>
+      return (
+        <div className='flex flex-col'>
+          <span className='font-medium'>{details.firstName} {details.lastName}</span>
+          <span className='text-xs text-muted-foreground'>{details.email || details.phone}</span>
+        </div>
+      )
     },
   },
   {
@@ -124,15 +69,7 @@ export const usersColumns: ColumnDef<WithdrawalRequest>[] = [
         variant = 'destructive'
       }
 
-      /* const variant =
-        status === 'pending'
-          ? 'secondary'
-          : status === 'cancelled'
-            ? 'destructive'
-            : status === 'delivered'
-              ? 'default'
-              : 'outline'
-      */ return (
+      return (
         <div className='flex space-x-2'>
           <Badge variant={variant} className='capitalize'>
             {status}
@@ -149,22 +86,27 @@ export const usersColumns: ColumnDef<WithdrawalRequest>[] = [
   {
     accessorKey: 'createdAt',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Date' />
+      <DataTableColumnHeader column={column} title='Date & Time' />
     ),
     cell: ({ row }) => {
       const dateString = row.getValue('createdAt') as string
       if (!dateString) return 'N/A'
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
+      return (
+        <div className='flex flex-col text-xs'>
+          <span>{new Date(dateString).toLocaleDateString()}</span>
+          <span className='text-muted-foreground'>{new Date(dateString).toLocaleTimeString()}</span>
+        </div>
+      )
     },
   },
   {
     id: 'actions',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Actions' />
+    ),
     cell: ({ row }) => <DataTableRowActions row={row} />,
     enableSorting: false,
     enableHiding: false,
   },
 ]
+

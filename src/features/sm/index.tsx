@@ -9,53 +9,53 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { UsersDialogs } from './components/users-dialogs'
-import { UsersPrimaryButtons } from './components/users-primary-buttons'
-import { UsersProvider } from './components/users-provider'
-import { UsersTable } from './components/users-table'
-import { type User } from './data/schema'
+import { UsersDialogs } from '../bdm/components/users-dialogs'
+import { UsersPrimaryButtons } from '../bdm/components/users-primary-buttons'
+import { UsersProvider } from '../bdm/components/users-provider'
+import { SalesManagerTable } from '../bdm/components/sm-table'
+import { type User } from '../bdm/data/schema'
 
-const route = getRouteApi('/_authenticated/bdm/')
+const route = getRouteApi('/_authenticated/sm/')
 
-export function BDM() {
+export function SalesManagers() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
   const { user } = useAuth()
 
-  // BDM state
-  const [bdmUsers, setBdmUsers] = useState<User[]>([])
+  const [smUsers, setSmUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const fetchBdmUsers = async () => {
+  const fetchSmUsers = async () => {
     setIsLoading(true)
     try {
       const response = await axios.get(
-        apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.GET_ALL) + user?.id
+        apiUrl(API_CONFIG.ENDPOINTS.SALES_MANAGER.GET_ALL) + user?.id
       )
-      setBdmUsers(response.data?.managers || [])
+      console.log('SM data', response.data)
+      setSmUsers(response.data?.managers || response.data || [])
     } catch (error) {
-      console.error('Failed to fetch managers', error)
+      console.error('Failed to fetch sales managers', error)
     } finally {
       setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchBdmUsers()
+    fetchSmUsers()
   }, [])
 
   return (
     <UsersProvider
-      activeTab='bdm'
+      activeTab='sm'
       setActiveTab={() => {}}
-      addUser={(newUser) => setBdmUsers((prev) => [...prev, newUser])}
+      addUser={(newUser) => setSmUsers((prev) => [...prev, newUser])}
       removeUser={(id: string) =>
-        setBdmUsers((prev) =>
+        setSmUsers((prev) =>
           prev.filter((u) => (u as any)._id !== id && (u as any).id !== id)
         )
       }
       updateUser={(id: string, changes: Partial<User>) =>
-        setBdmUsers((prev) =>
+        setSmUsers((prev) =>
           prev.map((u) =>
             (u as any)._id === id || (u as any).id === id
               ? { ...u, ...changes }
@@ -76,17 +76,17 @@ export function BDM() {
       <Main>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>BD/BDM Management</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>Sales Managers</h2>
             <p className='text-muted-foreground'>
-              Coordinate managers and their roles here.
+              Coordinate sales managers and their roles here.
             </p>
           </div>
-          <UsersPrimaryButtons activeTab='bdm' />
+          <UsersPrimaryButtons activeTab='sm' />
         </div>
 
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <UsersTable
-            data={bdmUsers}
+          <SalesManagerTable
+            data={smUsers}
             search={search}
             navigate={navigate}
             isLoading={isLoading}

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type DeliveryRequest } from '../types'
 
-type UsersDialogType = 'process'
+type UsersDialogType = 'process' | 'view'
 
 type UsersContextType = {
   open: UsersDialogType | null

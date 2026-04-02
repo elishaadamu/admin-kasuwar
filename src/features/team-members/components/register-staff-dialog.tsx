@@ -39,7 +39,7 @@ import lgaData from '@/stores/lga.json'
 
 const formSchema = z.object({
   // Deployment Setup
-  role: z.enum(['bd', 'bdm', 'sm', 'tl']),
+  role: z.enum(['bd', 'bdm', 'sm', 'tl', 'rm']),
   regionalId: z.string().optional(),
   teamId: z.string().optional(),
   isTeamLead: z.boolean().default(false),
@@ -111,6 +111,9 @@ export function RegisterStaffDialog({ open, onOpenChange }: RegisterStaffDialogP
   
   const selectedRegion = form.watch('regionalId')
   const selectedState = form.watch('state')
+  const isRegionalLeader = form.watch('isRegionalLeader')
+  const isTeamLead = form.watch('isTeamLead')
+  const showDeployment = isRegionalLeader || isTeamLead
 
   // Update LGAs when state changes
   useEffect(() => {
@@ -268,6 +271,7 @@ export function RegisterStaffDialog({ open, onOpenChange }: RegisterStaffDialogP
                             <SelectItem value='bdm'>Business Development Manager (BDM)</SelectItem>
                             <SelectItem value='sm'>Sales Manager (SM)</SelectItem>
                             <SelectItem value='tl'>Team Lead (TL)</SelectItem>
+                            <SelectItem value='rm'>Regional Manager (RM)</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -275,59 +279,63 @@ export function RegisterStaffDialog({ open, onOpenChange }: RegisterStaffDialogP
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name='regionalId'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Region</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value as string}>
-                          <FormControl>
-                            <SelectTrigger className='w-full'>
-                              <SelectValue placeholder='Select region' />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {regions.map((region) => (
-                              <SelectItem key={region._id} value={region._id}>
-                                {region.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {showDeployment && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name='regionalId'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Region</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value as string}>
+                              <FormControl>
+                                <SelectTrigger className='w-full'>
+                                  <SelectValue placeholder='Select region' />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {regions.map((region) => (
+                                  <SelectItem key={region._id} value={region._id}>
+                                    {region.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    control={form.control}
-                    name='teamId'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Team</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value as string}
-                          disabled={!selectedRegion}
-                        >
-                          <FormControl>
-                            <SelectTrigger className='w-full'>
-                              <SelectValue placeholder='Select team' />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {teams.map((team) => (
-                              <SelectItem key={team._id} value={team._id}>
-                                {team.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      <FormField
+                        control={form.control}
+                        name='teamId'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Team</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value as string}
+                              disabled={!selectedRegion}
+                            >
+                              <FormControl>
+                                <SelectTrigger className='w-full'>
+                                  <SelectValue placeholder='Select team' />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {teams.map((team) => (
+                                  <SelectItem key={team._id} value={team._id}>
+                                    {team.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
 
                   <div className='flex flex-col space-y-4 justify-center pt-2'>
                     <FormField

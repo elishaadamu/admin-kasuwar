@@ -4,10 +4,10 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { DeliveryRequest } from '../types'
+import { type FundDebitUser } from '../types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const usersColumns: ColumnDef<DeliveryRequest>[] = [
+export const usersColumns: ColumnDef<FundDebitUser>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -36,59 +36,70 @@ export const usersColumns: ColumnDef<DeliveryRequest>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'senderName',
+    accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Sender Name' />
+      <DataTableColumnHeader column={column} title='Name' />
     ),
-    cell: ({ row }) => (
-      <LongText className='max-w-36'>{row.getValue('senderName')}</LongText>
-    ),
-    meta: { className: 'w-36' },
+    cell: ({ row }) => {
+      const name = row.getValue('name') as string
+      const firstName = (row.original as any).firstName
+      const lastName = (row.original as any).lastName
+      const displayName = name || (firstName && lastName ? `${firstName} ${lastName}`.trim() : 'N/A')
+      return <LongText className='max-w-36'>{displayName}</LongText>
+    },
+    meta: { className: 'w-48' },
   },
   {
-    accessorKey: 'receipientName',
+    accessorKey: 'email',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Recipient Name' />
+      <DataTableColumnHeader column={column} title='Email' />
     ),
-    cell: ({ row }) => (
-      <div className='w-fit text-nowrap'>{row.getValue('receipientName')}</div>
-    ),
+    cell: ({ row }) => <LongText className='max-w-48'>{row.getValue('email')}</LongText>,
+    meta: { className: 'w-48' },
   },
   {
-    accessorKey: 'senderPhone',
+    accessorKey: 'phone',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Sender Phone' />
+      <DataTableColumnHeader column={column} title='Phone' />
     ),
-    cell: ({ row }) => <div>{row.getValue('senderPhone')}</div>,
+    cell: ({ row }) => <div>{row.getValue('phone') || 'N/A'}</div>,
     enableSorting: false,
+    meta: { className: 'w-32' },
   },
   {
-    accessorKey: 'requestType',
+    accessorKey: 'role',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Request Type' />
+      <DataTableColumnHeader column={column} title='Role' />
     ),
-    cell: ({ row }) => (
-      <Badge variant='secondary' className='capitalize'>
-        {row.getValue('requestType')}
-      </Badge>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'isPaid',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Payment' />
-    ),
-    cell: ({ row }) => (
-      <Badge variant={row.getValue('isPaid') ? 'default' : 'destructive'}>
-        {row.getValue('isPaid') ? 'Paid' : 'Unpaid'}
-      </Badge>
-    ),
+    cell: ({ row }) => {
+      const role = (row.getValue('role') as string) || 'N/A'
+      return (
+        <Badge variant='outline' className='capitalize'>
+          {role.replace('-', ' ')}
+        </Badge>
+      )
+    },
     enableSorting: false,
     filterFn: (row, _, value) => {
-      const isPaid = row.getValue('isPaid') ? 'paid' : 'unpaid'
-      return value.includes(isPaid)
+      return value.includes(row.getValue('role'))
     },
+    meta: { className: 'w-32' },
+  },
+  {
+    accessorKey: 'walletBalance',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Wallet Balance' />
+    ),
+    cell: ({ row }) => {
+      const balance = row.getValue('walletBalance') as number | undefined
+      return (
+        <div className={cn('font-semibold', balance && balance > 0 ? 'text-green-600' : 'text-muted-foreground')}>
+          {balance ? `₦${balance.toLocaleString()}` : '₦0.00'}
+        </div>
+      )
+    },
+    enableSorting: false,
+    meta: { className: 'w-32 text-right' },
   },
   {
     accessorKey: 'status',
@@ -96,28 +107,28 @@ export const usersColumns: ColumnDef<DeliveryRequest>[] = [
       <DataTableColumnHeader column={column} title='Status' />
     ),
     cell: ({ row }) => {
-      const status = row.getValue('status') as string
+      const status = (row.getValue('status') as string) || (row.original as any).suspended ? 'suspended' : 'active'
       const variant =
-        status === 'pending'
-          ? 'secondary'
-          : status === 'cancelled'
+        status === 'active'
+          ? 'default'
+          : status === 'suspended'
             ? 'destructive'
-            : status === 'delivered'
-              ? 'default'
+            : status === 'pending'
+              ? 'secondary'
               : 'outline'
       return (
-        <div className='flex space-x-2'>
-          <Badge variant={variant} className='capitalize'>
-            {status}
-          </Badge>
-        </div>
+        <Badge variant={variant} className='capitalize'>
+          {status}
+        </Badge>
       )
     },
     filterFn: (row, _, value) => {
-      return value.includes(row.getValue('status'))
+      const status = (row.getValue('status') as string) || (row.original as any).suspended ? 'suspended' : 'active'
+      return value.includes(status)
     },
     enableHiding: false,
     enableSorting: false,
+    meta: { className: 'w-28' },
   },
   {
     id: 'actions',

@@ -38,31 +38,27 @@ import {
 } from '@/components/ui/select'
 import { DatePicker } from '@/components/date-picker'
 import { type User } from '../data/schema'
+import { useUsers } from './users-provider'
 
 // @ts-nocheck
 
 const formSchema = z.object({
   firstName: z.string().min(1, 'First Name is required.'),
+  middleName: z.string().optional(),
   lastName: z.string().min(1, 'Last Name is required.'),
   username: z.string().optional(),
-  gender: z.string().min(1, 'Gender is required.'),
-  maritalStatus: z.string().min(1, 'Marital status is required.'),
-  dateOfBirth: z.date({ required_error: 'Date of birth is required.' }),
+  gender: z.string().optional(),
+  maritalStatus: z.string().optional(),
+  dateOfBirth: z.date().optional(),
   address: z.string().min(1, 'Address is required.'),
   phoneNumber: z.string().min(1, 'Phone number is required.'),
   state: z.string().min(1, 'State is required.'),
   localGovt: z.string().min(1, 'Local Government is required.'),
-  nin: z.string().min(1, 'NIN is required.'),
+  nin: z.string().optional(),
   bankName: z.string().min(1, 'Bank name is required.'),
   accountName: z.string().min(1, 'Account name is required.'),
   accountNumber: z.string().min(1, 'Account number is required.'),
-  passportPhoto: z
-    .any()
-    .refine((files) => files?.length === 1, 'Passport photo is required.')
-    .refine(
-      (files) => files?.[0]?.size <= 500 * 1024,
-      'Max file size is 500KB.'
-    ),
+  passportPhoto: z.any().optional(),
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
@@ -83,9 +79,17 @@ export function UsersActionDialog({
   open,
   onOpenChange,
 }: UserActionDialogProps) {
+  const { activeTab } = useUsers()
   const [isLoading, setIsLoading] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+
+  const roleLabels: Record<string, string> = {
+    bdm: 'Business Manager (BDM)',
+    sm: 'Sales Manager (SM)',
+    hr: 'HR Manager',
+  }
+  const currentRoleLabel = roleLabels[activeTab] || 'Manager'
   const isEdit = !!currentRow
   const { states, lgas, isLgasLoading, fetchLgas } = useLocation()
   const form = useForm<UserForm>({
@@ -97,6 +101,7 @@ export function UsersActionDialog({
         }
       : {
           firstName: '',
+          middleName: '',
           lastName: '',
           username: '',
           email: '',
@@ -153,39 +158,69 @@ export function UsersActionDialog({
         console.log(response.data)
         toast.success('Manager updated successfully!')
       } else {
-        const fileToBase64 = (file: File): Promise<string> =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.readAsDataURL(file)
-            reader.onload = () => resolve(reader.result as string)
-            reader.onerror = (error) => reject(error)
-          })
-        const passportPhotoBase64 = await fileToBase64(values.passportPhoto[0])
-        const payload = {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          gender: values.gender,
-          maritalStatus: values.maritalStatus,
-          dateOfBirth: values.dateOfBirth.toISOString(),
-          address: values.address,
-          state: values.state,
-          localGovt: values.localGovt,
-          nin: values.nin,
-          validId: values.nin,
-          bankName: values.bankName,
-          accountName: values.accountName,
-          accountNumber: values.accountNumber,
-          passportPhoto: passportPhotoBase64,
-          phone: values.phoneNumber,
-          email: values.email,
-          adminId: user?.id,
-          role: 'bdm',
+        let endpoint = apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.CREATE) + user?.id
+        let finalPayload = {}
+
+        if (activeTab === 'sm') {
+          endpoint = apiUrl(API_CONFIG.ENDPOINTS.SALES_MANAGER.CREATE) + user?.id
+          // Strict payload structure for SM
+          finalPayload = {
+            firstName: values.firstName,
+            middleName: values.middleName || '',
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phoneNumber,
+            address: values.address,
+            state: values.state,
+            localGovt: values.localGovt,
+            accountName: values.accountName,
+            accountNumber: values.accountNumber,
+            bankName: values.bankName,
+          }
+          console.log('SM Payload:', finalPayload)
+        } else {
+          // Payload for BDM and HR
+          const fileToBase64 = (file: File): Promise<string> =>
+            new Promise((resolve, reject) => {
+              const reader = new FileReader()
+              reader.readAsDataURL(file)
+              reader.onload = () => resolve(reader.result as string)
+              reader.onerror = (error) => reject(error)
+            })
+            
+          let passportPhotoBase64 = ''
+          if (values.passportPhoto && values.passportPhoto.length > 0) {
+            passportPhotoBase64 = await fileToBase64(values.passportPhoto[0])
+          }
+
+          finalPayload = {
+            firstName: values.firstName,
+            middleName: values.middleName || '',
+            lastName: values.lastName,
+            gender: values.gender,
+            maritalStatus: values.maritalStatus,
+            dateOfBirth: values.dateOfBirth?.toISOString(),
+            address: values.address,
+            state: values.state,
+            localGovt: values.localGovt,
+            nin: values.nin,
+            validId: values.nin,
+            bankName: values.bankName,
+            accountName: values.accountName,
+            accountNumber: values.accountNumber,
+            passportPhoto: passportPhotoBase64,
+            phone: values.phoneNumber,
+            email: values.email,
+            adminId: user?.id,
+            role: roleMap[activeTab] || 'bdm',
+          }
+
+          if (activeTab === 'hr') {
+            endpoint = apiUrl(API_CONFIG.ENDPOINTS.HR.CREATE)
+          }
         }
-        console.log('Payload:', payload)
-        const response = await axios.post(
-          apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.CREATE + user?.id),
-          payload
-        )
+
+        const response = await axios.post(endpoint, finalPayload)
         console.log(response.data)
 
         toast.success('Manager added successfully!')
@@ -242,10 +277,10 @@ export function UsersActionDialog({
       <DialogContent className='m-4 h-full sm:max-w-lg'>
         <DialogHeader className='text-start'>
           <DialogTitle>
-            {isEdit ? 'Edit Manager' : 'Add New Manager'}
+            {isEdit ? `Edit ${currentRoleLabel}` : `Add New ${currentRoleLabel}`}
           </DialogTitle>
           <DialogDescription>
-            {isEdit ? 'Update the Manager here. ' : 'Create new Manager here. '}
+            {isEdit ? `Update the ${currentRoleLabel} here. ` : `Create new ${currentRoleLabel} here. `}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
@@ -269,6 +304,26 @@ export function UsersActionDialog({
                         <FormControl>
                           <Input
                             placeholder='John'
+                            className='col-span-4'
+                            autoComplete='off'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className='col-span-4 col-start-3' />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='middleName'
+                    render={({ field }) => (
+                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                        <FormLabel className='col-span-2 text-end'>
+                          Middle Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Quincy'
                             className='col-span-4'
                             autoComplete='off'
                             {...field}
@@ -336,76 +391,80 @@ export function UsersActionDialog({
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name='gender'
-                    render={({ field }) => (
-                      <FormItem className='grid w-full grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                        <FormLabel className='col-span-2 text-end'>
-                          Gender
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className='col-span-4 w-full'>
-                              <SelectValue placeholder='Select gender' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='male'>Male</SelectItem>
-                              <SelectItem value='female'>Female</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage className='col-span-4 col-start-3' />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name='maritalStatus'
-                    render={({ field }) => (
-                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                        <FormLabel className='col-span-2 text-end'>
-                          Marital Status
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className='col-span-4 w-full'>
-                              <SelectValue placeholder='Select status' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='single'>Single</SelectItem>
-                              <SelectItem value='married'>Married</SelectItem>
-                              <SelectItem value='divorced'>Divorced</SelectItem>
-                              <SelectItem value='widowed'>Widowed</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage className='col-span-4 col-start-3' />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name='dateOfBirth'
-                    render={({ field }) => (
-                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                        <FormLabel className='col-span-2 text-end'>
-                          Date of Birth
-                        </FormLabel>
-                        <DatePicker
-                          selected={field.value}
-                          onSelect={field.onChange}
-                        />
-                        <FormMessage className='col-span-4 col-start-3' />
-                      </FormItem>
-                    )}
-                  />
+                  {activeTab !== 'sm' && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name='gender'
+                        render={({ field }) => (
+                          <FormItem className='grid w-full grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                            <FormLabel className='col-span-2 text-end'>
+                              Gender
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <SelectTrigger className='col-span-4 w-full'>
+                                  <SelectValue placeholder='Select gender' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='male'>Male</SelectItem>
+                                  <SelectItem value='female'>Female</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage className='col-span-4 col-start-3' />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='maritalStatus'
+                        render={({ field }) => (
+                          <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                            <FormLabel className='col-span-2 text-end'>
+                              Marital Status
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <SelectTrigger className='col-span-4 w-full'>
+                                  <SelectValue placeholder='Select status' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='single'>Single</SelectItem>
+                                  <SelectItem value='married'>Married</SelectItem>
+                                  <SelectItem value='divorced'>Divorced</SelectItem>
+                                  <SelectItem value='widowed'>Widowed</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage className='col-span-4 col-start-3' />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='dateOfBirth'
+                        render={({ field }) => (
+                          <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                            <FormLabel className='col-span-2 text-end'>
+                              Date of Birth
+                            </FormLabel>
+                            <DatePicker
+                              selected={field.value}
+                              onSelect={field.onChange}
+                            />
+                            <FormMessage className='col-span-4 col-start-3' />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
                   <FormField
                     control={form.control}
                     name='address'
@@ -494,25 +553,6 @@ export function UsersActionDialog({
                   />
                   <FormField
                     control={form.control}
-                    name='nin'
-                    render={({ field }) => (
-                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                        <FormLabel className='col-span-2 text-end'>
-                          NIN
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder='National Identification Number'
-                            className='col-span-4'
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className='col-span-4 col-start-3' />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
                     name='bankName'
                     render={({ field }) => (
                       <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
@@ -568,33 +608,56 @@ export function UsersActionDialog({
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name='passportPhoto'
-                    render={({ field: { value, onChange, ...fieldProps } }) => (
-                      <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                        <FormLabel className='col-span-2 text-end'>
-                          Passport
-                        </FormLabel>
-                        <FormControl className='col-span-4'>
-                          <Input
-                            {...fieldProps}
-                            type='file'
-                            accept='image/png, image/jpeg, image/jpg'
-                            onChange={(event) => onChange(event.target.files)}
-                          />
-                        </FormControl>
-                        {photoPreview && (
-                          <img
-                            src={photoPreview}
-                            alt='Passport preview'
-                            className='col-span-4 col-start-3 mt-2 h-24 w-24 rounded-md object-cover'
-                          />
+                  {activeTab !== 'sm' && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name='nin'
+                        render={({ field }) => (
+                          <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                            <FormLabel className='col-span-2 text-end'>
+                              NIN
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder='National Identification Number'
+                                className='col-span-4'
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className='col-span-4 col-start-3' />
+                          </FormItem>
                         )}
-                        <FormMessage className='col-span-4 col-start-3' />
-                      </FormItem>
-                    )}
-                  />
+                      />
+                      <FormField
+                        control={form.control}
+                        name='passportPhoto'
+                        render={({ field: { value, onChange, ...fieldProps } }) => (
+                          <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                            <FormLabel className='col-span-2 text-end'>
+                              Passport
+                            </FormLabel>
+                            <FormControl className='col-span-4'>
+                              <Input
+                                {...fieldProps}
+                                type='file'
+                                accept='image/png, image/jpeg, image/jpg'
+                                onChange={(event) => onChange(event.target.files)}
+                              />
+                            </FormControl>
+                            {photoPreview && (
+                              <img
+                                src={photoPreview}
+                                alt='Passport preview'
+                                className='col-span-4 col-start-3 mt-2 h-24 w-24 rounded-md object-cover'
+                              />
+                            )}
+                            <FormMessage className='col-span-4 col-start-3' />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
                 </>
               )}
             </form>
@@ -620,12 +683,12 @@ export function UsersActionDialog({
                   : 'Save changes'
                 : isLoading
                   ? 'Adding...'
-                  : 'Add Business Manager'}
+                  : `Add ${currentRoleLabel}`}
             </Button>
           )}
         </DialogFooter>
         <p className='mb-4 text-center text-sm text-gray-500'>
-          Note: Password is the Business Manager Phone number
+          Note: Password is the {currentRoleLabel} Phone number
         </p>
       </DialogContent>
     </Dialog>

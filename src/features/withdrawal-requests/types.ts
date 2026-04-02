@@ -1,21 +1,46 @@
-export interface DeliveryRequest {
-  _id: string
-  createdAt: string
-  deliveryDuration: string
-  description: string
-  isPaid: boolean
-  receipientAddress: string
-  receipientAltPhone?: string
-  receipientLGA: string
-  receipientName: string
-  receipientPhone: string
-  receipientState: string
-  requestType: string
-  senderAddress: string
-  senderLGA: string
-  senderName: string
-  senderPhone: string
-  senderState: string
-  status: 'pending' | 'cancelled' | 'approved' | 'delivered' // Example statuses, adjust as needed
-  updatedAt: string
+export interface SettlementInfo {
+  accountNumber?: string | number
+  bankName?: string
+  accountName?: string
+  name?: string
+  accName?: string
+  accNumber?: string | number
 }
+
+export interface WithdrawalRequest {
+  _id: string
+  transactionId?: string
+  amount: number | string
+  chargeAmount?: number | string
+  netAmount?: number | string
+  role?: string
+  userModel?: string
+  accName?: string
+  accNumber?: string | number
+  bankName?: string
+  email?: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+  status: 'pending' | 'approved' | 'rejected' | 'completed' | 'cancelled'
+  createdAt: string
+  updatedAt?: string
+  userDetails?: {
+    firstName?: string
+    lastName?: string
+    email?: string
+    phone?: string
+    virtualAccount?: SettlementInfo
+  }
+  user?: {
+    firstName?: string
+    lastName?: string
+    email?: string
+    phone?: string
+    virtualAccount?: SettlementInfo
+  }
+  settlementInfo?: SettlementInfo
+  virtualAccount?: SettlementInfo
+}
+
+export type DeliveryRequest = WithdrawalRequest

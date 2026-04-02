@@ -12,24 +12,28 @@ const statusStyles: Record<string, string> = {
   failed: 'bg-red-100 text-red-800 border-red-200',
 }
 
-const typeStyles: Record<string, string> = {
-  credit: 'text-green-600',
-  debit: 'text-red-600',
-  transfer: 'text-blue-600',
-}
-
 export const transactionsColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'reference',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Reference' />
+      <DataTableColumnHeader column={column} title='Transaction ID' />
     ),
     cell: ({ row }) => <div className='font-mono text-[10px] uppercase'>{row.getValue('reference') || row.original._id}</div>,
   },
   {
+    accessorKey: 'amount',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Amounts' />
+    ),
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue('amount'))
+      return <div className='font-bold'>₦{amount.toLocaleString()}</div>
+    },
+  },
+  {
     accessorKey: 'userDetails',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='User' />
+      <DataTableColumnHeader column={column} title='User Name' />
     ),
     cell: ({ row }) => {
       const details = row.original.userDetails
@@ -37,33 +41,9 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
       return (
         <div className='flex flex-col'>
           <span className='font-medium'>{details.firstName} {details.lastName}</span>
-          <span className='text-xs text-muted-foreground'>{details.email}</span>
+          <span className='text-[10px] text-muted-foreground'>{details.email || details.phone}</span>
         </div>
       )
-    },
-  },
-  {
-    accessorKey: 'type',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Type' />
-    ),
-    cell: ({ row }) => {
-      const type = row.getValue('type') as string
-      return (
-        <div className={cn('font-medium capitalize', typeStyles[type] || '')}>
-          {type}
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'amount',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Amount' />
-    ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
-      return <div className='font-bold'>₦{amount.toLocaleString()}</div>
     },
   },
   {
@@ -81,23 +61,18 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: 'for',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Purpose' />
-    ),
-    cell: ({ row }) => {
-      const purpose = row.getValue('for') as string
-      return <div className='capitalize text-xs font-medium bg-muted px-2 py-0.5 rounded'>{purpose?.replace(/_/g, ' ') || '-'}</div>
-    },
-  },
-  {
     accessorKey: 'createdAt',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Date' />
+      <DataTableColumnHeader column={column} title='Date & time' />
     ),
     cell: ({ row }) => {
       const date = row.getValue('createdAt') as Date
-      return <div className='text-xs text-muted-foreground'>{new Date(date).toLocaleString()}</div>
+      return (
+        <div className='flex flex-col text-xs'>
+          <span>{new Date(date).toLocaleDateString()}</span>
+          <span className='text-muted-foreground'>{new Date(date).toLocaleTimeString()}</span>
+        </div>
+      )
     },
   },
   {
@@ -108,3 +83,4 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     cell: TransactionsRowActions,
   },
 ]
+

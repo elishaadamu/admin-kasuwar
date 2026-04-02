@@ -12,6 +12,7 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
+import { useAuth } from '@/context/auth-context'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from 'sonner'
@@ -29,15 +30,38 @@ const route = getRouteApi('/_authenticated/team-members/')
 export function TeamMembers() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+  const { user } = useAuth()
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [geoZones, setGeoZones] = useState<any[]>([])
   const [selectedZone, setSelectedZone] = useState<string>('')
   const [teams, setTeams] = useState<any[]>([])
   const [selectedTeam, setSelectedTeam] = useState<string>('')
-  const [activeTab, setActiveTab] = useState('wallets')
+  const [activeTab, setActiveTab] = useState('managers')
   const [activeSubTab, setActiveSubTab] = useState('assign')
+  const [managers, setManagers] = useState<User[]>([])
+  const [isManagersLoading, setIsManagersLoading] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  const fetchManagers = async () => {
+    setIsManagersLoading(true)
+    try {
+      const response = await axios.get(
+        apiUrl(API_CONFIG.ENDPOINTS.MANAGERS.GET_ALL) + user?.id,
+        { withCredentials: true }
+      )
+      const allManagers = (response.data?.managers || response.data || []) as any[]
+      // Filter for TL and RM specifically
+      const filtered = allManagers.filter(
+        (m: any) => m.role === 'tl' || m.role === 'rm'
+      )
+      setManagers(filtered)
+    } catch (error) {
+      console.error('Failed to fetch managers', error)
+    } finally {
+      setIsManagersLoading(false)
+    }
+  }
 
   const fetchUsers = async (teamId: string) => {
     setIsLoading(true)
@@ -82,6 +106,7 @@ export function TeamMembers() {
 
   useEffect(() => {
     fetchGeoZones()
+    fetchManagers()
   }, [])
 
   useEffect(() => {
@@ -171,76 +196,100 @@ export function TeamMembers() {
                 <SelectValue placeholder='Navigate to...' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='wallets'>Wallets</SelectItem>
                 <SelectItem value='managers'>Team Members</SelectItem>
+                <SelectItem value='wallets'>Wallets</SelectItem>
+                <SelectItem value='team-search'>Team Search</SelectItem>
                 <SelectItem value='team-assignments'>Team Assignments</SelectItem>
                 <SelectItem value='regional-stats'>Regional Stats</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <TabsList className='hidden min-[992px]:flex'>
-            <TabsTrigger value='wallets'>Wallets</TabsTrigger>
             <TabsTrigger value='managers'>Team Members</TabsTrigger>
+            <TabsTrigger value='wallets'>Wallets</TabsTrigger>
+            <TabsTrigger value='team-search'>Team Search</TabsTrigger>
             <TabsTrigger value='team-assignments'>Team Assignments</TabsTrigger>
             <TabsTrigger value='regional-stats'>Regional Stats</TabsTrigger>
           </TabsList>
+          <TabsContent value='managers' className='space-y-4'>
+            <div className='space-y-4'>
+              <div>
+                <h3 className='text-lg font-medium'>Regional Managers & Team Leads</h3>
+                <p className='text-sm text-muted-foreground'>Direct management personnel.</p>
+              </div>
+              <UsersTable
+                data={managers}
+                search={search}
+                navigate={navigate}
+                isLoading={isManagersLoading}
+              />
+            </div>
+          </TabsContent>
+
           <TabsContent value='wallets' className='space-y-4'>
             <WalletManagement />
           </TabsContent>
-          <TabsContent value='managers' className='space-y-4'>
-            <div className='flex flex-wrap gap-4'>
-              <div className='w-full max-w-[200px]'>
-                <Select value={selectedZone} onValueChange={handleZoneChange}>
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Select Zone' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {geoZones.map((zone) => (
-                      <SelectItem key={zone._id} value={zone._id}>
-                        {zone.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+          <TabsContent value='team-search' className='space-y-4'>
+            <div className='space-y-4'>
+              <div>
+                <h3 className='text-lg font-medium'>Team-based Search</h3>
+                <p className='text-sm text-muted-foreground'>Filter staff by their assigned zones and teams.</p>
               </div>
-              <div className='w-full max-w-[200px]'>
-                <Select 
-                  value={selectedTeam} 
-                  onValueChange={setSelectedTeam}
-                  disabled={!selectedZone}
-                >
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Select Team' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teams.map((team) => (
-                      <SelectItem key={team._id} value={team._id}>
-                        {team.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {selectedTeam && (
-                <div className='w-full sm:w-auto'>
-                  <Button 
-                    variant="destructive" 
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                  >
-                    <Trash className="w-4 h-4 mr-2" />
-                    Delete Team
-                  </Button>
+              <div className='flex flex-wrap gap-4'>
+                <div className='w-full max-w-[200px]'>
+                  <Select value={selectedZone} onValueChange={handleZoneChange}>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select Zone' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {geoZones.map((zone) => (
+                        <SelectItem key={zone._id} value={zone._id}>
+                          {zone.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
-            </div>
-            <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-              <UsersTable
-                data={users}
-                search={search}
-                navigate={navigate}
-                isLoading={isLoading}
-              />
+                <div className='w-full max-w-[200px]'>
+                  <Select 
+                    value={selectedTeam} 
+                    onValueChange={setSelectedTeam}
+                    disabled={!selectedZone}
+                  >
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select Team' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {teams.map((team) => (
+                        <SelectItem key={team._id} value={team._id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {selectedTeam && (
+                  <div className='w-full sm:w-auto'>
+                    <Button 
+                      variant="destructive" 
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                    >
+                      <Trash className="w-4 h-4 mr-2" />
+                      Delete Team
+                    </Button>
+                  </div>
+                )}
+              </div>
+              <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
+                <UsersTable
+                  data={users}
+                  search={search}
+                  navigate={navigate}
+                  isLoading={isLoading}
+                />
+              </div>
             </div>
           </TabsContent>
           <TabsContent value='team-assignments' className='space-y-4'>

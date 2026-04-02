@@ -108,7 +108,9 @@ export const sidebarData: SidebarData = {
           icon: UsersRound,
           items: [
             { title: 'Agents', url: '/agents' },
-            { title: 'Developers / SM', url: '/bdm' },
+            { title: 'BD/BDM Management', url: '/bdm' },
+            { title: 'Sales Managers', url: '/sm' },
+            { title: 'HR Management', url: '/hr' },
             { title: 'Regional / Team Leads', url: '/team-members' },
             { title: 'Transactions', url: '/transactions' },
           ],

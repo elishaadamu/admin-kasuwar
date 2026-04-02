@@ -25,7 +25,6 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { roles } from '../data/data'
 import { DeliveryRequest } from '../types'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 
 declare module '@tanstack/react-table' {
@@ -191,7 +190,6 @@ export function UsersTable({
         </Table>
       </div>
       <DataTablePagination table={table} />
-      <DataTableBulkActions table={table} />
     </div>
   )
 }
