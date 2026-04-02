@@ -300,14 +300,18 @@ export function TeamMembers() {
                     <SelectValue placeholder='Action' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='assign'>Assign</SelectItem>
-                    <SelectItem value='reassign'>Reassign</SelectItem>
+                    <SelectItem value='assign'>Assign Member</SelectItem>
+                    <SelectItem value='reassign'>Reassign Member</SelectItem>
+                    <SelectItem value='lead'>Set Team Lead</SelectItem>
+                    <SelectItem value='regional-leader'>Set Regional Leader</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <TabsList className='hidden min-[992px]:grid w-full max-w-md grid-cols-2'>
-                <TabsTrigger value='assign'>Assign</TabsTrigger>
-                <TabsTrigger value='reassign'>Reassign</TabsTrigger>
+              <TabsList className='hidden min-[992px]:grid w-full max-w-2xl grid-cols-4'>
+                <TabsTrigger value='assign'>Assign Member</TabsTrigger>
+                <TabsTrigger value='reassign'>Reassign Member</TabsTrigger>
+                <TabsTrigger value='lead'>Team Lead</TabsTrigger>
+                <TabsTrigger value='regional-leader'>Regional Leader</TabsTrigger>
               </TabsList>
               <div className='mt-4'>
                 <TabsContent value='assign'>
@@ -316,7 +320,12 @@ export function TeamMembers() {
                 <TabsContent value='reassign'>
                   <TeamLeadManagement mode='reassign' onSuccess={() => setActiveTab('managers')} />
                 </TabsContent>
-               
+                <TabsContent value='lead'>
+                  <TeamLeadManagement mode='lead' onSuccess={() => setActiveTab('managers')} />
+                </TabsContent>
+                <TabsContent value='regional-leader'>
+                  <TeamLeadManagement mode='regional-leader' onSuccess={() => setActiveTab('managers')} />
+                </TabsContent>
               </div>
             </Tabs>
           </TabsContent>

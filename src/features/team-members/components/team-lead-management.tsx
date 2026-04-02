@@ -24,7 +24,7 @@ interface Team {
 }
 
 interface TeamLeadManagementProps {
-  mode: 'assign' | 'lead' | 'reassign'
+  mode: 'assign' | 'lead' | 'reassign' | 'regional-leader'
   onSuccess?: () => void
 }
 
@@ -89,7 +89,7 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
 
   const handleZoneChange = (zoneId: string) => {
     setFormData((prev) => ({ ...prev, zoneId, teamId: '' }))
-    if (zoneId) {
+    if (zoneId && mode !== 'regional-leader') {
       fetchTeams(zoneId)
     } else {
       setTeams([])
@@ -98,8 +98,15 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.email || !formData.zoneId || !formData.teamId) {
+    
+    // Validate fields based on mode
+    if (!formData.email || !formData.zoneId) {
       toast.error('Please fill in all required fields')
+      return
+    }
+    
+    if (mode !== 'regional-leader' && !formData.teamId) {
+      toast.error('Please select a team')
       return
     }
 
@@ -119,7 +126,7 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
       } else if (mode === 'reassign') {
         const payload = {
           email: formData.email,
-          teamd: formData.teamId,
+          teamId: formData.teamId,
         }
         await axios.put(
           apiUrl(API_CONFIG.ENDPOINTS.REGIONAL.REASSIGN_MEMBER),
@@ -131,8 +138,18 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
           teamId: formData.teamId,
           email: formData.email,
         }
+        console.log('Team Lead Payload:', payload)
         await axios.put(
           apiUrl(API_CONFIG.ENDPOINTS.REGIONAL.SET_TEAM_LEAD),
+          payload,
+          { withCredentials: true }
+        )
+      } else if (mode === 'regional-leader') {
+        const payload = {
+          email: formData.email,
+        }
+        await axios.post(
+          apiUrl(`${API_CONFIG.ENDPOINTS.REGIONAL.ASSIGN_ZONE_LEADER}${formData.zoneId}/leader`),
           payload,
           { withCredentials: true }
         )
@@ -143,7 +160,9 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
           ? 'Member assigned successfully' 
           : mode === 'reassign' 
           ? 'Assignment updated successfully' 
-          : 'Team leader set successfully'
+          : mode === 'lead'
+          ? 'Team leader set successfully'
+          : 'Regional leader set successfully'
       )
       
       // Reset form
@@ -156,7 +175,7 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
       setTeams([])
       if (onSuccess) onSuccess()
     } catch (error: any) {
-      toast.error(error.response?.data?.message || `Failed to ${mode} member`)
+      toast.error(error.response?.data?.message || `Failed to perform ${mode} action`)
     } finally {
       setIsSubmitting(false)
     }
@@ -165,20 +184,22 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
   const getTitle = () => {
     if (mode === 'assign') return 'Assign Member'
     if (mode === 'reassign') return 'Reassign Member'
-    return 'Set Team Leader'
+    if (mode === 'lead') return 'Set Team Leader'
+    return 'Set Regional Leader'
   }
 
   const getDescription = () => {
     if (mode === 'assign') return 'Assign a new member to a team'
     if (mode === 'reassign') return 'Move an existing member to a different team'
-    return 'Assign a leader to a specific team'
+    if (mode === 'lead') return 'Assign a leader to a specific team'
+    return 'Assign a leader to a geopolitical zone'
   }
 
   const getButtonContent = () => {
     if (isSubmitting) return <><Loader2 className='mr-2 h-4 w-4 animate-spin' /> Processing...</>
     if (mode === 'assign') return <><UserPlus className='mr-2 h-4 w-4' /> Assign Member</>
     if (mode === 'reassign') return <><Repeat className='mr-2 h-4 w-4' /> Reassign Member</>
-    return <><UserCog className='mr-2 h-4 w-4' /> Set Lead</>
+    return <><UserCog className='mr-2 h-4 w-4' /> Set Leader</>
   }
 
   return (
@@ -227,7 +248,7 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
 
           <div className='grid gap-4 sm:grid-cols-2'>
             <div className='flex flex-col space-y-2'>
-              <Label htmlFor='zone'>Zone</Label>
+              <Label htmlFor='zone'>Geopolitical Zone</Label>
               <Select
                 value={formData.zoneId}
                 onValueChange={handleZoneChange}
@@ -245,25 +266,27 @@ export function TeamLeadManagement({ mode, onSuccess }: TeamLeadManagementProps)
               </Select>
             </div>
 
-            <div className='flex flex-col space-y-2'>
-              <Label htmlFor='team'>State / Team</Label>
-              <Select
-                value={formData.teamId}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, teamId: value }))}
-                disabled={!formData.zoneId || isLoadingTeams}
-              >
-                <SelectTrigger id='team' className='w-full'>
-                  <SelectValue placeholder={isLoadingTeams ? 'Loading...' : 'Select Team'} />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team._id} value={team._id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {mode !== 'regional-leader' && (
+              <div className='flex flex-col space-y-2'>
+                <Label htmlFor='team'>State / Team</Label>
+                <Select
+                  value={formData.teamId}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, teamId: value }))}
+                  disabled={!formData.zoneId || isLoadingTeams}
+                >
+                  <SelectTrigger id='team' className='w-full'>
+                    <SelectValue placeholder={isLoadingTeams ? 'Loading...' : 'Select Team'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map((team) => (
+                      <SelectItem key={team._id} value={team._id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <Button type='submit' className='w-full sm:w-auto' disabled={isSubmitting}>
