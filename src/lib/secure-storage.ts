@@ -16,7 +16,9 @@ export const decryptData = <T>(encryptedData: string): T | null => {
     }
     return null
   } catch (error) {
-    console.error('Decryption failed:', error)
+    // We just log a gentle warning instead of the full error stack,
+    // as it usually just means± the encryption key changed or localStorage is stale.
+    console.warn('Session decryption failed. The corrupted session will be cleared.')
     return null
   }
 }

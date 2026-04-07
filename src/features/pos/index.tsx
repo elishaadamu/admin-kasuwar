@@ -28,6 +28,7 @@ export function Pos() {
         apiUrl(API_CONFIG.ENDPOINTS.POS.GET_ALL_ORDERS),
         { withCredentials: true }
       )
+      console.log(response.data)
       // The API returns { success: true, allOrders: [...] }
       const allOrders = response.data?.allOrders || []
       setOrders(allOrders)

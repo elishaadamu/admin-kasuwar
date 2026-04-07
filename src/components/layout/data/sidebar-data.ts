@@ -73,12 +73,14 @@ export const sidebarData: SidebarData = {
           ],
         },
         {
-          title: 'Order Management',
+          title: 'All Orders',
           icon: Package,
-          items: [
-            { title: 'All Orders', url: '/orders' },
-            { title: 'POS Orders', url: '/pos' },
-          ],
+          url: '/orders',
+        },
+        {
+          title: 'POS Orders',
+          icon: Package,
+          url: '/pos',
         },
         {
           title: 'Product Management',

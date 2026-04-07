@@ -75,14 +75,18 @@ export function PosViewDialog({ open, onOpenChange, currentRow }: Props) {
             <h4 className='font-semibold mb-1 text-muted-foreground uppercase tracking-wide text-xs'>Products</h4>
             <div className='divide-y rounded-md border'>
               {currentRow.products.map((p) => (
-                <div key={p._id} className='flex justify-between px-4 py-2'>
-                  <div>
-                    <span className='font-medium'>{decodeHtml(p.name)}</span>
-                    <span className='text-muted-foreground ml-2'>×{p.quantity}</span>
+                <div key={p._id} className='flex flex-col px-4 py-2'>
+                  <div className='flex justify-between'>
+                    <div>
+                      <span className='font-medium'>{decodeHtml(p.name)}</span>
+                      <span className='text-muted-foreground ml-2'>×{p.quantity}</span>
+                    </div>
+                    <span className='font-semibold whitespace-nowrap'>
+                      {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(p.price * p.quantity)}
+                    </span>
                   </div>
-                  <span className='font-semibold whitespace-nowrap'>
-                    {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(p.price * p.quantity)}
-                  </span>
+                  {p.description && <div className='text-xs text-muted-foreground mt-1 line-clamp-2'>{p.description}</div>}
+                  {p.vendor && <div className='text-xs text-muted-foreground mt-0.5'>Vendor ID/Name: {p.vendor}</div>}
                 </div>
               ))}
               <div className='flex justify-between px-4 py-2 bg-muted/50 font-semibold'>

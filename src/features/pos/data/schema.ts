@@ -3,6 +3,7 @@ import { z } from 'zod'
 const posProductSchema = z.object({
   productId: z.string(),
   name: z.string(),
+  description: z.string().optional(),
   quantity: z.number(),
   price: z.number(),
   vendor: z.string(),
