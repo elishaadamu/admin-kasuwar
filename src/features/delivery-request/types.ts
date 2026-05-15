@@ -16,6 +16,7 @@ export interface DeliveryRequest {
   senderName: string
   senderPhone: string
   senderState: string
-  status: 'pending' | 'cancelled' | 'approved' | 'delivered' // Example statuses, adjust as needed
+  status: 'pending' | 'cancelled' | 'approved' | 'delivered' | 'assigned' | 'completed'
+  deliveryManStatus?: 'pending' | 'accepted' | 'rejected'
   updatedAt: string
 }

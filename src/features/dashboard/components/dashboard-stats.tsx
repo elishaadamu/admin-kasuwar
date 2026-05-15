@@ -49,9 +49,9 @@ import {
 // ─── Period Filter Toggle ───
 type Period = 'today' | 'thisWeek' | 'thisMonth'
 
-interface DashboardStatsProps {}
+interface DashboardStatsProps { }
 
-export function DashboardStats({}: DashboardStatsProps) {
+export function DashboardStats({ }: DashboardStatsProps) {
   const { user, appState, isStateLoading, refetchState } = useAuth()
   const [period, setPeriod] = useState<Period>('today')
   const [orders, setOrders] = useState<any[]>([])
@@ -63,6 +63,7 @@ export function DashboardStats({}: DashboardStatsProps) {
   const [regionsOverview, setRegionsOverview] = useState<any>(null)
   const [regionDetails, setRegionDetails] = useState<any[]>([])
   const [transactionStats, setTransactionStats] = useState<any>(null)
+  const [withdrawals, setWithdrawals] = useState<any[]>([])
   const [isLoadingExtra, setIsLoadingExtra] = useState(false)
 
   // Fetch supplementary data
@@ -81,6 +82,7 @@ export function DashboardStats({}: DashboardStatsProps) {
           customersRes,
           regionsRes,
           txStatsRes,
+          withdrawalsRes,
         ] = await Promise.allSettled([
           axios.get(apiUrl(API_CONFIG.ENDPOINTS.ORDER.GET) + user.id),
           axios.get(apiUrl(API_CONFIG.ENDPOINTS.PRODUCT.GET) + user.id),
@@ -90,6 +92,7 @@ export function DashboardStats({}: DashboardStatsProps) {
           axios.get(apiUrl(API_CONFIG.ENDPOINTS.CUSTOMERS.GET_ALL) + user.id),
           axios.get(apiUrl(API_CONFIG.ENDPOINTS.REGIONAL.GET_REGIONS_STATS), { withCredentials: true }),
           axios.get(apiUrl(API_CONFIG.ENDPOINTS.TRANSACTIONS.ANALYTICS), { withCredentials: true }),
+          axios.get(apiUrl(API_CONFIG.ENDPOINTS.WITHDRAWALS.GET_ALL) + user.id),
         ])
 
         if (ordersRes.status === 'fulfilled') setOrders(ordersRes.value.data?.orders || [])
@@ -100,6 +103,7 @@ export function DashboardStats({}: DashboardStatsProps) {
         if (customersRes.status === 'fulfilled') setCustomers(customersRes.value.data?.users || [])
         if (regionsRes.status === 'fulfilled') setRegionsOverview(regionsRes.value.data)
         if (txStatsRes.status === 'fulfilled') setTransactionStats(txStatsRes.value.data?.data)
+        if (withdrawalsRes.status === 'fulfilled') setWithdrawals(withdrawalsRes.value.data?.withdrawals || [])
       } catch (error) {
         console.error('Dashboard fetch error:', error)
       } finally {
@@ -111,7 +115,7 @@ export function DashboardStats({}: DashboardStatsProps) {
 
   // ─── Derived Counts ───
   const totals = appState?.totals || { user: 0, vendor: 0, agent: 0, admin: 0 }
-  
+
   // Period-based counts
   const periodData = appState?.[period]
   const periodCounts = periodData?.counts || {}
@@ -133,6 +137,12 @@ export function DashboardStats({}: DashboardStatsProps) {
   // Online/Offline (approximation based on recent activity)
   const onlineUsers = periodCounts?.online || periodCounts?.user || 0
   const offlineUsers = (totals.user || 0) - onlineUsers
+
+  // New Metrics
+  const pendingWithdrawalsCount = withdrawals.filter(w => w.status === 'pending').length
+  const pendingDeliveriesCount = deliveryRequests.filter(r =>
+    r.status === 'pending'
+  ).length
 
   // Delivery man and tasks
   const totalDeliveryMen = Array.isArray(deliveryMen) ? deliveryMen.length : 0
@@ -172,24 +182,26 @@ export function DashboardStats({}: DashboardStatsProps) {
 
       {/* ═══ Row 1 — User Activity Cards ═══ */}
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-        {/* 1: Online Users */}
+        {/* 1: Pending Withdrawal */}
         <StatCard
-          title='Online Users'
-          value={isStateLoading ? '...' : onlineUsers}
-          subtitle={`${period === 'today' ? 'Today' : period === 'thisWeek' ? 'This week' : 'This month'}`}
-          icon={<UserCheck className='h-4 w-4' />}
-          accentClass='text-emerald-500'
-          bgClass='bg-emerald-500/10'
+          title='Pending Withdrawal'
+          value={isLoadingExtra ? '...' : pendingWithdrawalsCount}
+          subtitle='Awaiting processing'
+          icon={<Wallet className='h-4 w-4' />}
+          accentClass='text-amber-500'
+          bgClass='bg-amber-500/10'
+          linkTo='/withdrawal-requests'
         />
 
-        {/* 2: Offline Users */}
+        {/* 2: Pending Delivery */}
         <StatCard
-          title='Offline Users'
-          value={isStateLoading ? '...' : Math.max(0, offlineUsers)}
-          subtitle='Currently offline'
-          icon={<UserX className='h-4 w-4' />}
-          accentClass='text-slate-400'
-          bgClass='bg-slate-400/10'
+          title='Pending Delivery'
+          value={isLoadingExtra ? '...' : pendingDeliveriesCount}
+          subtitle='Awaiting Assignment'
+          icon={<Truck className='h-4 w-4' />}
+          accentClass='text-blue-500'
+          bgClass='bg-blue-500/10'
+          linkTo='/delivery-requests'
         />
 
         {/* Total Users */}
@@ -455,12 +467,11 @@ export function DashboardStats({}: DashboardStatsProps) {
                     className='flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50'
                   >
                     <div className='flex items-center gap-3'>
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
-                        index === 0 ? 'bg-amber-500/20 text-amber-600' :
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${index === 0 ? 'bg-amber-500/20 text-amber-600' :
                         index === 1 ? 'bg-slate-300/30 text-slate-600' :
-                        index === 2 ? 'bg-orange-400/20 text-orange-600' :
-                        'bg-muted text-muted-foreground'
-                      }`}>
+                          index === 2 ? 'bg-orange-400/20 text-orange-600' :
+                            'bg-muted text-muted-foreground'
+                        }`}>
                         {index < 3 ? <Crown className='h-4 w-4' /> : index + 1}
                       </div>
                       <div>
@@ -504,12 +515,11 @@ export function DashboardStats({}: DashboardStatsProps) {
                     className='flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted/50'
                   >
                     <div className='flex items-center gap-3'>
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${
-                        index === 0 ? 'bg-amber-500/20 text-amber-600' :
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${index === 0 ? 'bg-amber-500/20 text-amber-600' :
                         index === 1 ? 'bg-slate-300/30 text-slate-600' :
-                        index === 2 ? 'bg-orange-400/20 text-orange-600' :
-                        'bg-muted text-muted-foreground'
-                      }`}>
+                          index === 2 ? 'bg-orange-400/20 text-orange-600' :
+                            'bg-muted text-muted-foreground'
+                        }`}>
                         {index + 1}
                       </div>
                       <div>

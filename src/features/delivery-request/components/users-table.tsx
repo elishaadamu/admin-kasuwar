@@ -116,7 +116,7 @@ export function UsersTable({
             options: [
               { label: 'Pending', value: 'pending' },
               { label: 'Assigned', value: 'assigned' },
-              { label: 'Completed', value: 'completed' },
+              { label: 'Approved', value: 'approved' },
             ],
           },
 

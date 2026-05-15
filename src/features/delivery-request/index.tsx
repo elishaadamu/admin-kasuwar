@@ -34,7 +34,6 @@ export function DeliveryRequest() {
       const response = await axios.get(
         apiUrl(API_CONFIG.ENDPOINTS.DELIVERY_REQUESTS.GET_ALL)
       )
-      console.log(response.data)
 
       const bdUsers = response.data.requests || []
       setUsers(bdUsers)
